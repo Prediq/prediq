@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.6'
+# Superior IRB placement.
+gem 'pry-rails', '~> 0.3.2'
 # Use mysql as the database for Active Record
 gem 'mysql2'
 # Use SCSS for stylesheets
