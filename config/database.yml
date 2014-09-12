@@ -51,4 +51,4 @@ production:
   <<: *default
   database: prediq_production
   username: prediq
-  password: <%= ENV['VAGRANT_DATABASE_PASSWORD'] %>
+  password: <%= ENV['PREDIQ_DATABASE_PASSWORD'] %>
