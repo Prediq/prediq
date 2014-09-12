@@ -12,10 +12,10 @@
 default: &default
   adapter:  mysql2
   encoding: utf8
-  pool: 5
+  pool:     5
   username: root
   password:
-  host: localhost
+  host:     localhost
 
 development:
   <<: *default
@@ -47,8 +47,9 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-production:
+staging:
   <<: *default
-  database: prediq_production
-  username: prediq
+  host:     box308.bluehost.com
+  database: achievf2_api
+  username: achievf2_RbyApiU
   password: <%= ENV['PREDIQ_DATABASE_PASSWORD'] %>

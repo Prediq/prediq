@@ -17,3 +17,4 @@
 
 .vagrant
 .DS_Store
+config/application.yml

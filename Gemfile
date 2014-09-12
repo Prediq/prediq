@@ -14,6 +14,8 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer',  platforms: :ruby
 
+# config/application.yml
+gem 'figaro', git: "https://github.com/laserlemon/figaro", ref: "9f54872dfc1a972b4a971211706272f0f38495f4"
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -37,4 +39,3 @@ gem 'spring',        group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
-
