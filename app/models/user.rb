@@ -41,9 +41,34 @@
 
 class User < ActiveRecord::Base
   self.table_name = "api_customer"
-  
+
+  validates :approved,          inclusion: [true, false]
+  validates :customer_group_id, presence: true
+  validates :date_added,        presence: true # REVIEW
+  validates :fax,               presence: true # ...really?
+  validates :firstname,         presence: true
+  validates :lastname,          presence: true
+  validates :newsletter,        inclusion: [true, false]
+  validates :salt,              presence: true
+  validates :status,            inclusion: [true, false] # huh?
+  validates :telephone,         presence: true # TODO: format
+  validates :token,             presence: true # REVIEW
+
+  after_initialize :set_defaults, if: :new_record?
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  protected
+
+  def set_defaults
+    self.approved            = true if self.approved.nil?
+    self.customer_group_id ||= 0 # REVIEW
+    self.date_added        ||= DateTime.now
+    self.salt              ||= "test" # TODO
+    self.status              = true if self.status.nil?
+    self.token             ||= "test" # TODO
+  end
 end
