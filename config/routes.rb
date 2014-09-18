@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
-  devise_for :users
-  root 'external_pages#welcome'
+  root 'example_pages#welcome'
 
-  
+  devise_for :users
+
+  get '/dashboard' => 'example_pages#dashboard'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

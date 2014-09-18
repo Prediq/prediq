@@ -12,7 +12,7 @@
 #  customer_id            :integer          not null, primary key
 #  date_added             :datetime         not null
 #  email                  :string(96)       not null
-#  encrypted_password     :string(255)      default(""), not null
+#  encrypted_password     :string(70)       default(""), not null
 #  fax                    :string(32)       not null
 #  firstname              :string(32)       not null
 #  ip                     :string(40)       default("0"), not null
@@ -20,7 +20,6 @@
 #  last_sign_in_ip        :string(255)
 #  lastname               :string(32)       not null
 #  newsletter             :boolean          default(FALSE), not null
-#  password               :string(40)       not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string(255)

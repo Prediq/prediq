@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140917003122) do
+ActiveRecord::Schema.define(version: 0) do
 
   create_table "api_address", primary_key: "address_id", force: true do |t|
     t.integer "customer_id",                         null: false
@@ -112,38 +112,26 @@ ActiveRecord::Schema.define(version: 20140917003122) do
   end
 
   create_table "api_customer", primary_key: "customer_id", force: true do |t|
-    t.integer  "store_id",                          default: 0,     null: false
-    t.string   "firstname",              limit: 32,                 null: false
-    t.string   "lastname",               limit: 32,                 null: false
-    t.string   "email",                  limit: 96,                 null: false
-    t.string   "telephone",              limit: 32,                 null: false
-    t.string   "fax",                    limit: 32,                 null: false
-    t.string   "encrypted_password",     limit: 70, default: "",    null: false
-    t.string   "salt",                   limit: 9,                  null: false
-    t.string   "api_key",                limit: 32
-    t.boolean  "newsletter",                        default: false, null: false
-    t.integer  "address_id",                        default: 0,     null: false
-    t.integer  "customer_group_id",                                 null: false
-    t.string   "ip",                     limit: 40, default: "0",   null: false
-    t.boolean  "status",                                            null: false
-    t.boolean  "approved",                                          null: false
-    t.string   "token",                                             null: false
-    t.datetime "date_added",                                        null: false
-    t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                     default: 0,     null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "store_id",                     default: 0,     null: false
+    t.string   "firstname",         limit: 32,                 null: false
+    t.string   "lastname",          limit: 32,                 null: false
+    t.string   "email",             limit: 96,                 null: false
+    t.string   "telephone",         limit: 32,                 null: false
+    t.string   "fax",               limit: 32,                 null: false
+    t.string   "password",          limit: 40,                 null: false
+    t.string   "salt",              limit: 9,                  null: false
+    t.string   "api_key",           limit: 32
+    t.boolean  "newsletter",                   default: false, null: false
+    t.integer  "address_id",                   default: 0,     null: false
+    t.integer  "customer_group_id",                            null: false
+    t.string   "ip",                limit: 40, default: "0",   null: false
+    t.boolean  "status",                                       null: false
+    t.boolean  "approved",                                     null: false
+    t.string   "token",                                        null: false
+    t.datetime "date_added",                                   null: false
   end
 
   add_index "api_customer", ["api_key"], name: "api_key", unique: true, using: :btree
-  add_index "api_customer", ["email"], name: "index_api_customer_on_email", unique: true, using: :btree
-  add_index "api_customer", ["reset_password_token"], name: "index_api_customer_on_reset_password_token", unique: true, using: :btree
 
   create_table "api_customer_ban_ip", primary_key: "customer_ban_ip_id", force: true do |t|
     t.string "ip", limit: 40, null: false

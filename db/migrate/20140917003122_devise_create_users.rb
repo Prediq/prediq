@@ -3,7 +3,8 @@ class DeviseCreateUsers < ActiveRecord::Migration
     change_table(:api_customer) do |t|
       ## Database authenticatable
       # t.string :email,              null: false, default: ""
-      t.string :encrypted_password, null: false, default: ""
+      t.rename :password, :encrypted_password
+      t.change :encrypted_password, :string, limit: 70, default: ""
 
       ## Recoverable
       t.string   :reset_password_token
@@ -52,7 +53,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
   def rollback_up
     change_table(:api_customer) do |t|
       ## Database authenticatable
-      t.remove :encrypted_password rescue nil
+      t.rename :encrypted_password, :password rescue nil
 
       ## Recoverable
       t.remove :reset_password_token rescue nil
