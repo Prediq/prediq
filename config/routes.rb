@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root 'example_pages#welcome'
-
-  devise_for :users, path: '', path_names: {sign_in: ''}
+  
+  devise_for :users
 
   get '/dashboard' => 'example_pages#dashboard'
 

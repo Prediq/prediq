@@ -1,8 +1,13 @@
 # A SalesForecast is a multi-day sales prediction for a certain timespan.
-class MultiDayForecast < Struct.new(:user)
+class MultiDayForecast
   ENDPOINT = "http://api.bigmagma.com/get/forecast/sales"
 
   attr_reader :days, :response
+
+  def initialize(user)
+    @user = user
+    @days = []
+  end
 
   # start_at, end_at ?
   def retrieve(options = {})
@@ -19,7 +24,7 @@ class MultiDayForecast < Struct.new(:user)
         upper95:  day_response["Upper95"].to_f,
       )
     end
-    
+
     self
   end
 
