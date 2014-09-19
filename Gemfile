@@ -7,6 +7,8 @@ gem 'rails', '4.1.6'
 gem 'pry-rails', '~> 0.3.2'
 # Use mysql as the database for Active Record
 gem 'mysql2'
+# Good web server
+gem 'puma', '~> 2.9.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 # Use Uglifier as compressor for JavaScript assets
