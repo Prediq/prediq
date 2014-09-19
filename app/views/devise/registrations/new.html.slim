@@ -1,0 +1,42 @@
+.container-fluid
+  .row
+    .col-lg-4
+    .registration-form-container.col-lg-6
+      h2 Sign up
+      = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+        = devise_error_messages!
+        fieldset
+          .form-group.clearfix
+            = f.label :firstname, 'First Name', class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.text_field :firstname, autofocus: true
+          .form-group.clearfix
+            = f.label :lastname, 'Last Name', class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.text_field :lastname, autofocus: true
+          .form-group.clearfix
+            = f.label :telephone, class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.text_field :telephone, autofocus: true
+          .form-group.clearfix
+            = f.label :fax, class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.text_field :fax, autofocus: true
+          .form-group.clearfix
+            = f.label :email, class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.email_field :email, autofocus: true
+          .form-group.clearfix
+            = f.label :password, class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.password_field :password, autocomplete: "off", placeholder: "At least 8 characters"
+          .form-group.clearfix
+            = f.label :password_confirmation, class: 'col-lg-2 control-label'
+            .col-lg-10
+              = f.password_field :password_confirmation, autocomplete: "off"
+          .form-group.clearfix
+            .col-lg-10.col-lg-offset-2
+              = f.submit "Sign up"
+              | &nbsp;&nbsp;
+              = render "devise/shared/links"
+    .col-lg-4

@@ -1,0 +1,24 @@
+.container-fluid
+  .row
+    .col-lg-4
+    .registration-form-container.col-lg-6
+      h2 Sign in
+      = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+        .form-group
+          = f.label :email, class: 'col-lg-2 control-label'
+          .col-lg-10
+          = f.email_field :email, autofocus: true
+        .form-group
+          = f.label :password, class: 'col-lg-2 control-label'
+          .col-lg-10
+          = f.password_field :password, autocomplete: "off"
+        .form-group.clearfix
+          .col-lg-10.col-lg-offset-2
+            - if devise_mapping.rememberable?
+              .form-group
+                = f.check_box :remember_me
+                |&nbsp;
+                = f.label :remember_me
+            = f.submit "Sign up"
+            | &nbsp;&nbsp;
+            = render "devise/shared/links"

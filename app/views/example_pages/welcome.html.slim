@@ -1,1 +1,32 @@
-p Welcome to Prediq!
+.container-fluid#welcome-container.storm-background
+  #welcome
+    .jumbotron
+      .row
+        h1
+          | Prediq
+      .row
+        .col-lg-2
+        .col-lg-8
+          p
+            | Weather has more of an effect on your business than you think. Find out how the elements have been influencing your revenue and start using it to your advantage.
+            /It's accurate, it's effective, it's free. Sign up.
+    .welcome-login
+      .row
+        .col-lg-2
+        .form-container.col-lg-8
+          = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+            div
+              = f.label :email
+              br/
+              = f.email_field :email, autofocus: true
+            div
+              = f.label :password
+              br/
+              = f.password_field :password, autocomplete: "off"
+            - if devise_mapping.rememberable?
+              div
+                = f.check_box :remember_me
+                |&nbsp;
+                = f.label :remember_me
+            div= f.submit "Log in", class: 'btn btn-default'
+          = render "devise/shared/links"

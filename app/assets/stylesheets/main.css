@@ -1,0 +1,14 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  padding-top: 50px;
+}
+
+.storm-background {
+  background-image: url(https://launchrock-assets.s3.amazonaws.com/background-files/HZKSOEKT_1389299734281.jpg?_=0);
+  background-size: cover;
+  background-position: center center;
+}

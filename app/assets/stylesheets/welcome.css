@@ -1,0 +1,36 @@
+#welcome-container {
+  height: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+#welcome {
+  padding-top: 40px;
+}
+
+#welcome .jumbotron {
+  text-align: center;
+  color: white;
+  background: rgba(100, 73, 109, 0.5);
+}
+
+#welcome h1 {
+  font-weight: 500;
+}
+
+.welcome-login {
+  color: white;
+  margin-top: 150px;
+}
+.welcome-login input {
+  color: black;
+}
+.welcome-login .btn {
+  color: white;
+}
+.welcome-login .form-container {
+  text-align: center;
+}
+.welcome-login a {
+  color: white;
+}

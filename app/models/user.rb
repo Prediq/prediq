@@ -59,6 +59,12 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+         
+  public
+  
+  def full_name
+    "#{firstname} #{lastname}"
+  end
 
   protected
 

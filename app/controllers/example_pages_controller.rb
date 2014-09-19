@@ -5,6 +5,7 @@ class ExamplePagesController < ApplicationController
   end
 
   def dashboard
+    @dashboard_tab = true
     @forecast = MultiDayForecast.new(current_user).retrieve
   end
 end
