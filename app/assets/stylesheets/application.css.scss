@@ -1,0 +1,378 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ */
+
+@import "bootstrap";
+@import "bootstrap-responsive";
+
+//body { padding-top: 60px; }
+
+fieldset { font-weight: bold }
+
+select.date-select {
+    width:auto;
+    border: 1px solid #cccccc;
+    background-color: #ffffff;
+}
+
+.pagination ul {padding-top:20px;}
+
+.datadisp  {
+    border: 1px solid grey;
+    border-radius: 4px;
+    font-weight: 500;
+    background-color:#eee;
+
+//  padding: 4px;
+}
+.padlabel {
+    padding-top:6px;
+    padding-bottom:4px;
+}
+
+.aimg:link {color: #000000; text-decoration: none; }
+.aimg:hover { border-bottom: 0px; border: none; }
+
+a.btn-primary:visited { color:white; }
+a.btn-warning:visited { color:white; }
+a.btn-danger:visited { color:white; }
+
+table {
+    border-collapse: separate;
+    border-spacing: 6px;
+}
+
+.user-nav {
+    position: relative;
+    left: 700px;
+}
+
+.user-info {
+    position: relative;
+    left: 320px;
+    top: -10px;
+    color: white;
+    text-align: left;
+}
+
+//
+//.aimg:link {color: #000000; text-decoration: none; }
+//.aimg:hover { border-bottom: 0px; border: none; }
+
+//table {
+  //    border-collapse: separate;
+  //    border-spacing: 6px;
+  //}
+//table td, table th {
+  //    padding: 6px;
+  //}
+
+//.banner a.logo { border: none; display: inline-block; width: 140px; height: 139px; background: url('ra-logo.gif') no-repeat 0px 0px; }
+//
+////body { background: #723106 url(pattern_tile.jpg); }
+//
+//.banner .user { padding-top: 20px; color: brown; }
+//
+//.banner.backgrnd {
+  //  border: none;
+  //  display: inline-block;
+  //  height: 100px;
+  //  position: relative;
+  ////  background-image: url('banner_background.jpg') ;
+  ////  background-position: 100px 160px;
+  //}
+//
+//.banner#backgrnd {
+  //  border: solid;
+  //  display: inline-block;
+  //  height: 100px;
+  //  position: relative;
+  ////  background-image: url('banner_background.jpg') ;
+  //  //  background-position: 100px 160px;
+  //}
+//
+//.container { background-color: #fff; padding: 10px 20px 10px 20px; }
+//
+////ul.nav { padding-top: 20px; }
+////ul.nav li.dropdown ul.dropdown-menu { margin-top: -1px; }
+////ul.nav li.dropdown:hover ul.dropdown-menu { display: block; }
+//
+//.footer { font-size: .85em; }
+//.footer.span12 { border-top: 1px solid #ddd; margin-top: 20px; padding-top: 10px; padding-bottom: 25px; }
+//.footer .links { text-align: right; }
+//.footer .links a { margin: 0px 0px 0px 20px; }
+
+h1 {
+    font-size: 20px; }
+
+.col-header { font-size: 12px; font-weight: bold }
+
+.label { font-weight: bold }
+
+.odd {
+    background-color: #ececec; }
+
+.even {
+    background-color: #f6f6f6; }
+
+.pad4 {
+    padding: 4px
+}
+
+.padlabel {
+    padding-top:6px;
+    padding-bottom:4px;
+}
+// up/down arrows for "sortable"
+.pretty th .asc  { background-image: url(down_arrow.png); background-repeat:no-repeat; background-position: right center; }
+.pretty th .desc { background-image: url(up_arrow.png);   background-repeat:no-repeat; background-position: right center; }
+
+.pretty th .desc:after  { content: "\00a0\00a0\00a0\00a0\00a0\00a0"; }
+.pretty th .asc:after   { content: "\00a0\00a0\00a0\00a0\00a0\00a0"; }
+
+#content { padding-top: 80px; }
+
+.navbar .container a.brand {
+    border: none;
+    width: 209px; height: 78px;
+    display: inline-block;
+//  background: url(hiplogiq_logo.png) no-repeat 0px 0px;
+    background: url(socialcentiv_logo.png) no-repeat 0px 0px;
+}
+
+.navbar-inner { padding-top: 20px; }
+
+.navbar .brand { margin-left: 0px; }
+
+/* Large desktop */
+@media (min-width: 1200px) {
+
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+    #content { padding: 0px; }
+    .navbar .navbar-inner .container { padding: 20px 0px 0px 20px }
+}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+    #content { padding: 0px; }
+    .navbar .navbar-inner .container { padding: 20px 0px 0px 20px }
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+    #content { padding: 0px; }
+    .navbar .navbar-inner .container { padding: 20px 0px 0px 20px }
+}
+
+div.bizz-info{
+    padding: 16px;
+    margin: 10px 0;
+    width: 400px;
+    border: #ddd 1px solid;
+    border-top-color: #eee;
+    border-bottom-color: #bbb;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    font: bold 14px/18px Helvetica, Arial, sans-serif;
+    color: #000;
+}
+
+div.bizz-info > .avatar {
+    background:#ccc;
+    background-size: cover;
+    background-repeat: none;
+    background-position: center;
+    height: 60px;
+    width: 60px;
+    border-radius:250px;
+    float:left;
+    margin-right: 10px;
+}
+
+blockquote.twitter-tweet {
+    display: inline-block;
+    padding: 16px;
+    margin: 10px 0;
+    width: 400px;
+    border: #ddd 1px solid;
+    border-top-color: #eee;
+    border-bottom-color: #bbb;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    font: 14px/18px Helvetica, Arial, sans-serif;
+    color: #000;
+hr{
+    margin-bottom: 5px;
+}
+}
+
+blockquote.twitter-tweet p {
+    font: normal 16px "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 10px 5px 10px 0;
+    line-height: 20px;
+    height: 40px;
+    overflow-y: scroll;
+}
+blockquote.campaigns{
+    display: inline-block;
+    padding: 16px;
+    margin: 10px 0;
+    width: 400px;
+    border: #ddd 1px solid;
+    border-top-color: #eee;
+    border-bottom-color: #bbb;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    font: bold 14px/18px Helvetica, Arial, sans-serif;
+    color: #000;
+}
+
+span.authorhandle{
+    font-weight: normal;
+    color: #666;
+    font-size: 12px;
+}
+a.authorname{
+    color:black;
+    display:block;
+    font-weight:bold;
+}
+div.tweetauthorcont{
+    display:inline-block;
+    vertical-align: top;
+    height: 48px;
+}
+span.tweetage{
+    font-size: 12px;
+    color: #666;
+}
+span.tweetlocation{
+    font-size: 12px;
+    color: #666;
+    text-transform: capitalize;
+}
+div.locationcont{
+    float:right;
+}
+div.keywords{
+    padding-left: 80px;
+    width: 320px;
+    position: relative;
+    top: -40px;
+    z-index:1;
+    max-height: 100px;
+    overflow-y:scroll;
+}
+
+span.keys{
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: inline-block;
+    margin: 4px 1px;
+}
+
+.big{
+    font-size:2em !important;
+    padding:10px 20px !important;
+}
+
+span.inline-block{
+    display: inline-block;
+}
+span.popoverel{
+    display: block;
+    position: relative;
+    z-index: 2;
+    color:#2D8AD8;
+    cursor:pointer;
+}
+span.popoverel:hover{
+    text-decoration:underline;
+}
+p.businessinfo{
+    padding-left: 70px;
+    margin-bottom: 0;
+    font-size: 14.5px;
+    font-weight: 300;
+    line-height: 1.25;
+}
+
+.smalltext{
+    font-size: 1em;
+}
+
+.reply_text{
+    width:420px;
+    height:100px;
+    resize:none;
+}
+div.divider{
+    border:1px solid #efefef;
+    width:420px;
+    margin: 10px 0px;
+}
+.errorText{
+    color:#D32424;
+    font-weight:bold;
+}
+div.count_container{
+    width: 420px;
+}
+.icon-envelope{
+    opacity: .6;
+    font-size: 13px;
+}
+span.icontext{
+    color: #9B9B9B;
+    font-size:12px;
+}
+//------------------------\\
+// Media Queries for mobile \\
+//--------------------------//
+@media (max-width: 460px){
+    html,body{
+        overflow-x:hidden;
+    }
+    div.keywords{
+        width:75%;
+    }
+    blockquote.campaigns{
+        width:90%;
+    }
+    blockquote.twitter-tweet {
+        width:90%;
+    }
+    div.bizz-info{
+        width:90%;
+    }
+    div.divider{
+        width:98%
+    }
+    div.count_container{
+        width:98%
+    }
+    .reply_text{
+        width:95%;
+    }
+    h3{
+        font-size: 20.5px !important;
+    }
+    h3.popover-title{
+        font-size: 14px !important;
+    }
+}

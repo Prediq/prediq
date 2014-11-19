@@ -1,0 +1,22 @@
+@import "bootstrap";
+body { padding-top: 60px; }
+@import "bootstrap-responsive";
+
+select.date-select {
+  width:auto;
+  border: 1px solid #cccccc;
+  background-color: #ffffff;
+}
+
+.navbar-inverse .navbar-inner {
+//  works: background-image: linear-gradient(to bottom, #222, #111);
+  background-image: url('banner_background.png');
+  background-repeat: repeat;
+  border-color: #252525;
+}
+
+.navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active {
+  background-color: rgba(13, 46, 56, 1) !important;
+  border-radius: 5px;
+  box-shadow: 2px 2px rgba(0,0,0,0.5);
+}

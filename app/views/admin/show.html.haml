@@ -1,0 +1,24 @@
+- if params[:func] == 'admins'
+  - title "Administrative User"
+- elsif params[:func] == 'internals'
+  - title "Internal User"
+
+
+%p
+  %b Last Name:
+  = @user.last_name
+%p
+  %b First Name:
+  = @user.first_name
+%p
+  %b Email:
+  = @user.email
+%p
+  %b Roles:
+  = @user.print_roles
+
+%br
+
+= link_to 'Edit', edit_admin_path( admin_params.merge( id: @user ) ), :class => "btn btn-primary"
+= link_to 'Back', admins_path(admin_params),                           :class => "btn btn-primary"
+

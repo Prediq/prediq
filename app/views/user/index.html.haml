@@ -1,0 +1,79 @@
+-# = User.find( current_user.id).role? :admin
+
+- title "Listing Users"
+
+.pretty
+  = form_tag user_index_path, :method => 'get', :name => :search_form, :class => "well form-inline" do
+
+    = text_field_tag :last_name, params[:last_name],    :class => "input-small", :placeholder => "last name",   :style => 'position:relative;width:160px;'
+    = text_field_tag :first_name, params[:first_name],  :class => "input-small", :placeholder => "first name",  :style => 'position:relative;width:160px;'
+    = text_field_tag :email,   params[:email],          :class => "input-small", :placeholder => "email",       :style => 'position:relative;width:160px;'
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    = submit_tag "Search", :name => nil, :type => 'button', :onclick => 'this.form.submit();',  :class => 'btn btn-primary', :style => "position:relative; top:0px;"
+    = submit_tag "Clear", :type => "button", :onclick => "clear_form_elements(this.form);",     :class => 'btn btn-primary', :style => "position:relative; top:0px;"
+
+    = hidden_field_tag :sort,           params[:sort]
+    = hidden_field_tag :direction,      params[:direction]
+    = hidden_field_tag :page,           params[:page]
+    = hidden_field_tag :num_per_page,   params[:num_per_page]
+
+    .span12
+      .row
+        .span12{style:"height:2em;"}
+
+%table{ :class => 'table table-bordered table-striped pretty' }
+  %thead
+    %tr
+      %th= sortable :last_name,   'Last Name',  params
+      %th= sortable :first_name,  'First Name', params
+      %th= sortable :email,       'Email',      params
+      %th Actions
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= user.last_name
+        %td= user.first_name
+        %td= user.email
+        - if current_user.has_any_role?( :superadmin )
+          %td
+            - if current_user.id != user.id
+              %a.btn.btn-warning{"data-toggle" => "modal", :href => "#role-options-#{user.id}", :type => "button"} Change Role
+              = render user
+            %br
+            = user.print_roles
+          %td
+            = link_to 'Show', { :controller => :user, :action => :show, :id => user, :params => user_params }, :class => "btn btn-primary"
+            = link_to 'Edit', { :controller => :user, :action => :edit, :id => user, :params => user_params }, :class => "btn btn-warning"
+            = link_to 'Del', user, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", :method => :delete
+        - else
+          -# admin or reguser
+          %td
+            = user.print_roles
+          %td
+            = link_to 'Show', { :controller => :user, :action => :show, :id => user, :params => user_params }, :class => "btn btn-primary"
+            = link_to 'Edit', { :controller => :user, :action => :edit, :id => user, :params => user_params }, :class => "btn btn-warning"
+
+= paginate @users
+
+%p
+  Per Page:
+  |
+  = link_to  '5', { :controller => :user, :action => :index, :params => user_params.merge( :num_per_page => 5) }
+  |
+  = link_to '10', { :controller => :user, :action => :index, :params => user_params.merge( :num_per_page => 10) }
+  |
+  = link_to '25', { :controller => :user, :action => :index, :params => user_params.merge( :num_per_page => 25) }
+  |
+  = link_to '50', { :controller => :user, :action => :index, :params => user_params.merge( :num_per_page => 50) }
+  |
+%br
+
+- if current_user.has_any_role?(:superadmin )
+  -# NOTE:  This allows only a "Superadmin" to add users rather than the devise default devise behavior of self-registration (users/sign_up)
+  = link_to( 'Add User', { :controller => :user, :action => :new, :params => user_params }, :class => "btn btn-primary" )
+
+-# NOTE:  The link below is the default "devise" method where the user signs themselves up
+-# = link_to "Add User", new_user_registration_path
+
+

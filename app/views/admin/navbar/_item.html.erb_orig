@@ -1,0 +1,39 @@
+<% case params[:controller].camelize
+    when "Equipments" %>
+     <li><%= link_to 'Clients', clients_path %></li>
+     <li><%= link_to 'Sites', sites_path %></li>
+     <li class="active"><%= link_to 'Equipment', equipments_path %></li>
+     <li><%= link_to 'Users', user_index_path %></li>
+     <li><%= link_to 'Use Categories', use_categories_path %></li>
+  <% when "Clients" %>
+    <li class="active"><%= link_to 'Clients', clients_path %></li>
+    <li><%= link_to 'Sites', sites_path %></li>
+    <li><%= link_to 'Equipment', equipments_path %></li>
+    <li><%= link_to 'Users', user_index_path %></li>
+    <li><%= link_to 'Use Categories', use_categories_path %></li>
+  <% when "Sites" %>
+    <li><%= link_to 'Clients', clients_path %></li>
+    <li class="active"><%= link_to 'Sites', sites_path %></li>
+    <li><%= link_to 'Equipment', equipments_path %></li>
+    <li><%= link_to 'Users', user_index_path %></li>
+    <li><%= link_to 'Use Categories', use_categories_path %></li>
+  <% when "User" %>
+    <li><%= link_to 'Clients', clients_path %></li>
+    <li><%= link_to 'Sites', sites_path %></li>
+    <li><%= link_to 'Equipment', equipments_path %></li>
+    <li class="active"><%= link_to 'Users', user_index_path %></li>
+    <li><%= link_to 'Use Categories', use_categories_path %></li>
+  <% when "UseCategories" %>
+    <li><%= link_to 'Clients', clients_path %></li>
+    <li><%= link_to 'Sites', sites_path %></li>
+    <li><%= link_to 'Equipment', equipments_path %></li>
+    <li><%= link_to 'Users', user_index_path %></li>
+    <li class="active"><%= link_to 'Use Categories', use_categories_path %></li>
+    <% when "Dashboard" %>
+      <li><%= link_to 'Clients', clients_path %></li>
+      <li><%= link_to 'Sites', sites_path %></li>
+      <li><%= link_to 'Equipment', equipments_path %></li>
+      <li><%= link_to 'Users', user_index_path %></li>
+      <li><%= link_to 'Use Categories', use_categories_path %></li>  
+<% end %>
+

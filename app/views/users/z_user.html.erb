@@ -1,0 +1,40 @@
+
+<div class='modal' id='role-options-<%= user.id %>' style='display: none;'>
+  <form accept-charset="UTF-8" action="/user/<%= user.id %>" class="simple_form form-horizontal" id="edit_user_<%= user.id %>" method="post" novalidate="novalidate">
+    <div style="margin:0;padding:0;display:inline">
+      <input name="utf8" type="hidden" value="&#x2713;" />
+      <input name="_method" type="hidden" value="put" />
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+    </div>
+    <div class='modal-header'>
+      <a class='close' data-dismiss='modal'>×</a>
+      <h3>Change Role</h3>
+    </div>
+    <div class='modal-body'>
+      <div class="control-group radio_buttons optional user_role_ids">
+        <div class="controls">
+          <% Role.all.each do |role| %>
+              <label class="radio inline">
+                <%= role.name %>
+                <input class="radio_buttons optional" id="user_role_ids_<%= role.id %>" name="user[role_ids]" type="radio" value="<%= role.id %>" <%= (user.role_ids.include?( role.id ) ? "checked='checked'" : nil ) %>" />
+              </label>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class='modal-footer'>
+      <input class="btn btn-primary" name="commit" type="submit" value="Change Role" />
+      <a class='btn btn-primary' data-dismiss='modal' href='#' type='button'>Close</a>
+    </div>
+    <input id="user_id" name="user_id" type="hidden" />
+    <input id="page" name="page" type="hidden" />
+    <input id="num_per_page" name="num_per_page" type="hidden" value="10" />
+    <input id="sort" name="sort" type="hidden" value="name" />
+    <input id="direction" name="direction" type="hidden" value="asc" />
+    <input id="name" name="name" type="hidden" />
+    <input id="employee_id" name="employee_id" type="hidden" />
+    <input id="func" name="func" type="hidden" />
+    <input id="search" name="search" type="hidden" />
+  </form>
+</div>

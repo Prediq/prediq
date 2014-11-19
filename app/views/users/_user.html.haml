@@ -1,0 +1,54 @@
+.modal{:id => "role-options-#{user.id}", :style => "display: none;"}
+  %form.simple_form.form-horizontal{"accept-charset" => "UTF-8", :action => "/user/#{user.id}", :id => "edit_user_#{user.id}", :method => "post", :novalidate => "novalidate"}
+    %div{:style => "margin:0;padding:0;display:inline"}
+      %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+      %input{:name => "_method", :type => "hidden", :value => "put"}/
+      %input{:name => "authenticity_token", :type => "hidden", :value => form_authenticity_token}/
+
+      = hidden_field_tag 'page',              params[:page]
+      = hidden_field_tag 'num_per_page',      params[:num_per_page]
+      = hidden_field_tag 'sort',              params[:sort]
+      = hidden_field_tag 'direction',         params[:direction]
+      = hidden_field_tag 'last_name',         (params[:last_name].present?)         ? params[:last_name]        : nil
+      = hidden_field_tag 'primary_truck_id',  (params[:primary_truck_id].present?)  ? params[:primary_truck_id] : nil
+      = hidden_field_tag 'employee_id',       (params[:employee_id].present?)       ? params[:employee_id]      : nil
+      = hidden_field_tag 'func',              (params[:func].present?)              ? params[:func]             : nil
+
+    .modal-header
+      %a.close{"data-dismiss" => "modal"} ×
+      %h3 Change Role
+    .modal-body
+      .control-group.radio_buttons.optional.user_role_ids
+        .controls
+          -# original:
+          -#- Role.all.each do |role|
+          -#  %label.radio.inline
+          -#    = role.name
+          -#    -#%input.radio_buttons.optional{ :id => "user_role_ids_#{role.id}", :name => "user[role_ids]", :type => "radio", :value => "#{role.id}", "<%= (user.role_ids.include?( role.id ) ? "checked='checked'" : nil ) %>" }
+          -#    <input class="radio_buttons optional" id="user_role_ids_#{role.id}" name="user[role_ids]" type="radio" value="#{role.id}" #{(user.role_ids.include?( role.id ) ? "checked='checked'" : nil )} />
+          -# allow superadmin's to see "reguser" and "superadmin" choices and change all roles
+          - Role.all.each do |role|
+            - if current_user.has_any_role?( :superadmin )
+              %label.radio.inline
+                = role.name
+                <input class="radio_buttons optional" id="user_role_ids_#{role.id}" name="user[role_ids]" type="radio" value="#{role.id}" #{(user.role_ids.include?( role.id ) ? "checked='checked'" : nil )} />
+            -#- elsif current_user.has_any_role?( :admin )
+            -#  -# allow admins to see "reguser" and "admin" choices
+            -#  - if role.name != "superadmin"
+            -#    %label.radio.inline
+            -#      = role.name
+            -#      <input class="radio_buttons optional" id="user_role_ids_#{role.id}" name="user[role_ids]" type="radio" value="#{role.id}" #{(user.role_ids.include?( role.id ) ? "checked='checked'" : nil )} />
+
+    .modal-footer
+      %input.btn.btn-primary{:name => "commit", :type => "submit", :value => "Change Role"}/
+      %a.btn.btn-primary{"data-dismiss" => "modal", :href => "#", :type => "button"} Close
+
+    -#%input#user_id{     :name => "user_id", :type => "hidden"}/
+    -#%input#page{        :name => "page", :type => "hidden"}/
+    -#%input#num_per_page{:name => "num_per_page", :type => "hidden", :value => "10"}/
+    -#%input#sort{        :name => "sort", :type => "hidden", :value => "name"}/
+    -#%input#direction{   :name => "direction", :type => "hidden", :value => "asc"}/
+    -#%input#name{        :name => "name", :type => "hidden"}/
+    -#%input#employee_id{ :name => "employee_id", :type => "hidden"}/
+    -#%input#func{        :name => "func", :type => "hidden"}/
+    -#%input#search{      :name => "search", :type => "hidden"}/

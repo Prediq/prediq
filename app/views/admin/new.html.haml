@@ -1,0 +1,12 @@
+- if params[:func] == 'admins'
+  - user_disp = 'Administrative'
+  - title "New #{user_disp} User"
+- elsif params[:func] == 'internals'
+  - user_disp = 'Internal'
+  - title "New #{user_disp} User"
+
+= form_for @user, :url => {:controller => 'admin', :action => 'create'} do |f|
+
+  = render :partial => 'form', :locals => { :f => f }
+
+= link_to 'Back', { :controller => :admins, :action => :index, :params => user_params }, :class => "btn btn-primary"

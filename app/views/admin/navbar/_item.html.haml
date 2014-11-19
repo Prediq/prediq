@@ -1,0 +1,19 @@
+- [ 'User','Admins','Internal' ].each do |name|
+  - css_class = nil
+  - case name
+    - when 'User'
+      - link_name = 'Business Owners'
+      - path_name = 'user'
+      - func      = 'users'
+      - css_class = (params[:func] == 'users') ? 'active' : nil
+    - when 'Admins'
+      - link_name = 'Administrators'
+      - path_name = 'admins'
+      - func      = 'admins'
+      - css_class = (params[:func] == 'admins') ? 'active' : nil
+    - when 'Internal'
+      - link_name = 'Internal Users'
+      - path_name = 'admins'
+      - func      = 'internals'
+      - css_class = (params[:func] == 'internals') ? 'active' : nil
+  %li{ :class => css_class }= link_to "#{link_name}", "/cms/#{path_name}?func=#{func}"

@@ -15,6 +15,8 @@ module Prediq
     port = defined?(Rails::Server) ? (Rails::Server.new.options[:Port]) : 80
     config.action_mailer.default_url_options = {host: ENV['HOST'], port: port}
 
+    config.assets.paths << "#{Rails}/vendor/assets/fonts"
+
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'

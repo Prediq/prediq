@@ -1,0 +1,73 @@
+-if @user.errors.any?
+  #error_explanation
+    %h2= "#{pluralize(@user.errors.count, "error")} prohibited this User from being saved:"
+    %ul
+      - @user.errors.full_messages.each do |msg|
+        %li= msg
+
+.field
+  = f.label :email
+  = f.text_field :email
+.field
+  = f.label :first_name
+  = f.text_field :first_name
+.field
+  = f.label :last_name
+  = f.text_field :last_name
+
+.field
+  = f.label 'Role'
+  - Role.all.each do |role|
+    - if current_user.has_any_role?( :superadmin )
+      = radio_button_tag( :user_role, role.name, 2 )
+      = role.name
+    -#- elsif current_user.has_any_role?( :admin )
+    -#  - if role.name != 'superadmin'
+    -#    = radio_button_tag( :user_role, role.name, 3 )
+    -#    = role.name
+
+.field
+  = f.label :password
+  = f.password_field :password
+
+.field
+  = f.label :password_confirmation
+  = f.password_field :password_confirmation
+
+  -#create_table 'users', force: true do |t|
+  -#  t.string   "email",                               default: "", null: false
+  -#  t.string   "encrypted_password",                  default: "", null: false
+  -#  t.string   "reset_password_token"
+  -#  t.datetime "reset_password_sent_at"
+  -#  t.datetime "remember_created_at"
+  -#  t.integer  "sign_in_count",                       default: 0,  null: false
+  -#  t.datetime "current_sign_in_at"
+  -#  t.datetime "last_sign_in_at"
+  -#  t.string   "current_sign_in_ip"
+  -#  t.string   "last_sign_in_ip"
+  -#  t.string   "first_name"
+  -#  t.string   "last_name"
+  -#  t.string   "employee_id"
+  -#  t.string   "employee_type"
+  -#  t.string   "employee_skills",        limit: 4000
+  -#  t.string   "phone"
+  -#  t.string   "pager"
+  -#  t.datetime "created_at"
+  -#  t.datetime "updated_at"
+  -#  t.string   "authentication_token"
+
+
+
+= hidden_field_tag "page",              params[:page]
+= hidden_field_tag "num_per_page",      params[:num_per_page]
+= hidden_field_tag "sort",              params[:sort]
+= hidden_field_tag "direction",         params[:direction]
+= hidden_field_tag "first_name",        (params[:first_name].present?)        ? params[:first_name]       : nil
+= hidden_field_tag "last_name",         (params[:last_name].present?)         ? params[:last_name]        : nil
+
+.actions
+  
+  = submit_tag 'Save', :class => 'btn btn-primary'
+
+
+

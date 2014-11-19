@@ -1,0 +1,42 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- <a class="brand" href="#"></a> -->
+      <%= link_to '', dashboard_index_path, :class=> "brand" %>
+      <%= render 'layouts/user_info' %>
+      <div class="nav-collapse collapse">
+        <% if admin_signed_in? && current_admin.has_role?(:superadmin) %>
+          <ul class="nav">
+            <%= render :partial => "admin/navbar/item" %>
+          </ul>
+        <% end %>
+         <!--<%= render 'admin/navbar/sign_in_form' %>-->
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+
+
+<!-- %ul.nav.nav-pills
+  - if user_signed_in?
+    - if current_user.has_role?( :superadmin )
+
+      %li
+        = link_to 'Clients', clients_path( :direction => 'asc', :sort => 'name' )
+
+      %li
+        = link_to 'Sites', sites_path
+
+      %li
+        = link_to 'Equipment', equipments_path
+
+      %li
+        = link_to 'Users', user_index_path( :direction => 'asc', :sort => 'last_name'  )
+
+      %li
+        = link_to 'Use Catgrs', use_categories_path -->

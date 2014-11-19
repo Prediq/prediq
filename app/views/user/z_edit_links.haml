@@ -1,0 +1,9 @@
+-# how this was called from user/index:
+-#= render :partial => 'edit_links', :locals => { :user => user }
+= link_to 'Edit', edit_user_path( :id => user,
+                                  :num_per_page => params[:num_per_page],
+                                  :page         => params[:page],
+                                  :sort         => params[:sort],
+                                  :direction    => params[:direction],
+                                  :name         => (params[:name].present?) ? params[:name] : nil,
+                                  :employee_id  => (params[:employee_id].present?) ? params[:employee_id] : nil )

@@ -1,0 +1,27 @@
+- title "Employee"
+
+%p
+  %b Last Name:
+  = @user.last_name
+%p
+  %b First Name:
+  = @user.first_name
+%p
+  %b Employee ID:
+  = @user.employee_id
+%p
+  %b Email:
+  = @user.email
+%p
+  %b Roles:
+  = @user.print_roles
+
+%br
+
+-#= link_to 'Edit', edit_user_path( user_params.merge( :id => @user ) )
+-#\|
+-#= link_to 'Back', user_index_path( user_params )
+
+= link_to 'Edit', { :controller => :user, :action => :edit, :id => @user, :params => user_params },  :class => "btn btn-warning"
+= link_to 'Back', { :controller => :user, :action => :index, :params => user_params },               :class => "btn btn-primary"
+

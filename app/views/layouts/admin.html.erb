@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hiplogiq</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=9">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+
+  <%= csrf_meta_tags %>
+  <%#= render 'admin/html5_shim_for_internet_explorer' %>
+  <%#= render 'admin/favicons' %>
+  <%= yield(:head) %>
+</head>
+<body>
+<%= link_to '', dashboard_index_path, :class=> "brand" %>
+<%= render 'admin/navbar' %>
+
+<div id="content" class="container">
+  <div class="row">
+    <div class="span12">
+      <%= render 'admin/alerts' %>
+
+      <% if show_title? %>
+          <h1><%= yield(:title) %></h1>
+      <% end %>
+
+      <!--<%# if show_title? %>-->
+      <!--<%#= content_tag :h1 do %>-->
+      <!--<h1><%#= yield(:title) %></h1>-->
+      <!--<%# end %>-->
+      <!--<%# end %>-->
+
+      <%= yield %>
+
+      <%= render 'admin/footer' %>
+    </div>
+  </div>
+</div> <!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<%#= javascript_include_tag "application", "data-turbolinks-track" => true %>
+</body>
+</html>   

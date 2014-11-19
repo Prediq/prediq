@@ -1,0 +1,290 @@
+As follows are the steps to spin up a new staging / production server. Please note that if this is an image of a server
+at stage 7 is not available
+
+1.  log on to Rackspace and create your server
+
+Performance 1
+    Ubuntu 14.04
+    1GB RAM
+    1 vCPU
+    20GB SSD system disk
+    200Mb/s network bandwidth
+
+2.  Follow the Rackspace docs here:
+
+        http://www.rackspace.com/knowledge_center/article/configuring-basic-security-0
+
+    A. using the original password 'LLmTent7rUwy' (tVZoDtjbmLf6 for www_sc_01 @ 166.78.46.97)
+
+        $ ssh root@<SERVER ADDRESS> and change the root password (root / c0tt0nC$ndy)
+
+    B.  As root add the 'deploy' admin user with sudo access (deploy / blu3sonia)
+        1.  adduser deploy
+        2.  $ visudo
+        3.  at the end of the "# User privilege specification" section add:
+            deploy   ALL=(ALL) ALL
+
+    C.  on OS X, get the program 'ssh-copy-id' (brew install ssh-copy-id) and generate your private and public keys
+        if you do not already have them.
+
+        1.  $ ssh-keygen -t rsa
+        2.  cd ~/.ssh
+        3.  $ ssh-copy-id -i deploy@<your ip here 166.78.46.97>
+            NOTE: the '-i' option means to copy the default id_rsa.pub key
+
+    D. Copy other folks' public keys (inspired by http://www.davidgrant.ca/copy_ssh_public_key_to_server_in_one_line)
+        1. ssh deploy@166.78.46.97 "echo `cat /Users/billkiskin/hp_id_rsa.pub` >> ~/.ssh/authorized_keys"
+        2. ssh deploy@166.78.46.97 "echo `cat /Users/billkiskin/id_louis.pub` >> ~/.ssh/authorized_keys"
+
+3.  Edit / create your ~/.ssh/config file on the Mac
+
+    Host	    <LOCAL SERVER NAME>
+    HostName    <SERVER ADDRESS>
+    User 		deploy
+    Port 		22
+    PasswordAuthentication 	no
+
+    # marketing site www.socialcentiv.com staging server 01
+    Host    					wwwsc01
+    HostName        			166.78.46.97
+    User    					deploy
+    Port    					22
+    PasswordAuthentication 	    no
+
+
+4.  Edit the /etc/ssh/sshd_config file on the server
+
+    $ sudo -i
+    $ nano /etc/ssh/sshd_config
+
+    and make this section look like this:
+
+    # Authentication:
+    LoginGraceTime 120
+    PermitRootLogin no
+    PasswordAuthentication no
+    UseDNS no
+    AllowUsers deploy
+    StrictModes yes
+
+    Restarting ssh
+
+    Now we'll restart the ssh service.  Make sure you stay logged in while you restart ssh and test it with a new connection.
+    That way if something goes wrong you can troubleshoot it more easily.
+
+    On most distributions the service is "sshd", and you restart it with the command:
+
+    # sudo service sshd restart
+
+    On Ubuntu and some other distributions it's called "ssh", and is restarted with a similar command:
+
+    $ sudo service ssh restart
+
+    root@api-sc-01:~# sudo service ssh restart
+    ssh stop/waiting
+    ssh start/running, process 26374
+
+5. Update and install your package sources
+
+	A. Logout of root if you have not done so already and log back in as deploy
+
+    B. $ sudo apt-get update
+
+    C. APP SERVER command:  $ sudo apt-get install git-core shorewall curl nginx 
+
+    D. DB SERVER command:   $ sudo apt-get install git-core shorewall curl postgres lib-pq-dev
+
+6.  Install ruby with rvm: https://www.digitalocean.com/community/articles/how-to-install-ruby-on-rails-on-ubuntu-12-04-lts-precise-pangolin-with-rvm
+
+    A. $ \curl -L https://get.rvm.io | bash -s stable
+
+    B. $ rvm requirements
+
+    C. $ rvm install <RUBY VERSION (2.1.1 as of this writing)>
+
+    D. $ rvm use <RUBY VERSION> --default
+
+7.  Edit Sudoers file for cap deploys (this step may not be necessary)
+
+	A. $ sudo -i && visudo
+
+    B. Modify sudoers file with lines below
+
+==========================================================================================================================================
+
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+deploy  ALL=(ALL:ALL) ALL
+Cmnd_Alias NGINX = /sbin/start 
+deploy  ALL=(ALL) NOPASSWD: NGINX
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+
+==========================================================================================================================================
+
+8. ADD the server's ip to the codebase and test a deploy
+
+	A. config/deploy/staging.rb or config/deploy/production.rb
+
+		i.   add the server's net address to app_domains (should look like '<OTHER ADDRESS>,<SERVER ADDRESS>')
+
+		ii.  add the server's local (serviceNet) address to app_local_domains
+
+		iii. If the server is a database server, its ip and local ip should be not be added to app_*, for now there will only be one database server per setup
+
+		iv.  Make sure repository and branch in the files are set to the correct repo and branch you want to deploy to the server(s)
+
+	B. git add . && git commit -a -m "Added new server to deploy script <SERVER ADDRESS>" && git pull origin <BRANCH>
+
+		i.   Fix any potential merge conflicts then git push origin <BRANCH>
+
+	C. cap <ENV> deploy:setup
+
+		i.   see appendix A for what cap is doing here
+
+		ii.  make sure to run "psql -h <DB_LOCAL_ADDRESS> -U socialcompass -d <APP_NAME>_<RAILS_ENV>" on the app servers to make sure they can connect to the db server!
+
+        iii. NOTE! You can skip various setup tasks by running cap <ENV> deploy:setup -S skip_<TASK SKIP VAR>=true
+
+        iv.  To run setup without modifying the database server's tables, run cap <ENV> deploy:setup -S skip_db_init=true
+
+	D. cap <ENV> deploy
+
+		ii. see appendix B for what cap is doing here
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+													Appendix A cap <ENV> deploy:setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+These steps are done by cap, you will be prompted for data. All items listed as #a are for app server(s), all items listed as #b are for db server
+
+1.  Cap does its initial setup on the servers, for more information, see the capistrano source
+
+2a. App servers run db:setup
+
+	A.  Creates shared directory in cap deploy directory (/var/www/vhosts/<APP_NAME>/shared)
+
+	B.  Uses templating file in config/deploy/file_templates to create database.yml file in the shared directory
+
+	C.  The user will have to input the password for the database server
+
+2b. Db servers run db:init_db
+
+	A.  CREATE USER socialcompass with PASSWORD <USER INPUTTED PASS> SUPERUSER CREATEDB CREATEROLE
+
+	B.  create databases for each environment
+
+	C.  Enable remote connections
+
+	    i.   edit /etc/postgresql/[VERSION]/main/pg_hba.conf
+
+	    ii.  append the addresses of all remote staging or production app servers
+
+	    iii. edit /etc/postgresql/[VERSION]/main/postgreql.conf
+
+	    iv.  append * listen addresses (shorewall will block all unallowed connections)
+
+    D.  Restart the postgres server
+
+3.  Configure shorewall instead of the doc's suggested 'iptables' method
+
+    http://blog.jeff-owens.com/shorewall-firewall-on-ubuntu-feisty-vps-part-3/
+
+    A.  Create the files on the server needed to manage shorewall in /home/deploy/shorewall from templates in config/deploy/file_templates
+
+    	i.   interfaces file manages how the server defines the various networks (these networks can be viewed in linux with ifconfig)
+
+    	ii.  zones file manages what kind of networks the servers are connected to (are they ipv4 etc)
+
+    	iii. policy file manages the high level abstraction of how the firewall should work
+
+    	iv.  rules file manages the low level abstraction of how the firewall should work
+
+    		a. this is where you would put specific firewall rules to allow specific ips or a set of ips
+
+    		b. on the database server, there is code in this template that will add a rule for allowing local and net connections on port 5432 (postgres port)
+
+    	v.   shorewall.conf file manages configuration settings for shorewall itself
+
+    	vi.  default file contains a line of code that must be changed for shorewall to start successfully (thats literally the line's purpose)
+
+    B.  Move the files in /home/deploy/shorewall to their correct locations on the server (/etc/shorewall and /etc/default)
+
+    C.  Start (or restart) Shorewall
+
+4a. Configure nginx
+	
+	A. 	Create the nginx files on the server (/home/deploy/nginx) using the templates in config/deploy/file_templates
+
+		i.	The nginx.conf defines how many nginx workers are needed and the location of the server files
+
+		ii. The nginx_vhost file defines the nginx behavior of the application itself and the location of the puma server (done through unix socket bindings)
+
+	B.	Move the files from /home/deploy/nginx to /etc/nginx
+
+	C.  The vhost file is dropped into /etc/nginx/sites-available and symlinked to /etc/nginx/sites-enabled/default on staging
+
+		i.   This is so requests in staging go to the default site in the event the server's ip address is hit
+
+		ii.  On production, the dns records should already be setup therefore the symlink will not hit default but the app's name instead
+
+		iii. NOTE! IF two apps are ever hosted on the same staging machine, this logic will have to be modified slightly
+
+5a. Configure Puma
+
+	A.  Create the puma files on the server (/home/deploy/upstart) using the templates in config/deploy/file_templates
+
+		i.   The puma.conf file sets up the ruby environment for the puma server when it becomes daemonized (starts up correctly on reboot)
+
+		ii.  The puma-manager.conf file sets up the process that manages the puma processes on the server, it allows one to start / restart/ stop all puma processes on the server at once
+
+	B.  Move the files from /home/deploy/puma to /etc/init
+
+6a. Note, the setup task will not start puma and nginx
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+													Appendix B cap <ENV> deploy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1.	Cap pulls your code from git and the branch specified.
+
+2.  Cap deploys the code from the branch using the deploy scripts on your local machine (this is important to know)
+
+	A. 	The code is dropped into /var/www/vhosts/<APP_NAME>/releases
+
+	B. 	The latest release is symlinked to /var/www/vhosts/<APP_NAME>/current
+
+3.  Figaro gem takes your local application.yml and copies it to the /var/www/vhosts/<APP_NAME>/shared then symlinks the file to the file in the app's config directory
+
+	A.  This same process occurs for the database.yml as well, though it uses the version already present in the shared directory to symlink
+
+4.	cap deploy:restart occurs
+
+	A. our services are restarted (nginx and puma) if the server is the app server
+
+5.  Note, on database server(s), cap <ENV> deploy:migrate will still need to be run if there are database updates

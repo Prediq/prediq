@@ -1,0 +1,30 @@
+# store your custom template at foo/bar/database.yml.erb
+# set :template_dir, "foo/bar"
+#
+# example of database template
+
+base: &base
+  adapter: postgresql
+  encoding: unicode
+  username: <%= db_user %>
+  password: <%= Capistrano::CLI.ui.ask('Enter Postgres database password: ') %>
+  host: <%= db_local_domain %>
+
+development:
+  database: <%= application %>_development
+  <<: *base
+
+staging:
+  database: <%= application %>_staging
+  pool: 25
+  <<: *base
+
+test:
+  database: <%= application %>_test
+  <<: *base
+
+production:
+  database: <%= application %>_production
+  pool: 25
+  <<: *base
+

@@ -1,0 +1,8 @@
+= link_to 'Back', user_index_path(  :user_id => user_id?,
+                                    :event_id => params[:event_id],
+                                    :page => params[:page],
+                                    :num_per_page => params[:num_per_page],
+                                    :sort => params[:sort],
+                                    :direction => params[:direction],
+                                    :name => (params[:name].present?)           ? params[:name]      : nil,
+                                    :roles => (params[:roles].present?)           ? params[:roles]      : nil )

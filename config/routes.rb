@@ -5,7 +5,38 @@ Rails.application.routes.draw do
 
   get '/dashboard' => 'example_pages#dashboard'
 
-  # The priority is based upon order of creation: first created -> highest priority.
+  scope :path => :cms do
+
+    get '/',  to: "dashboard#index", as: 'default_route'
+
+    # devise_scope :admin do
+    #   get "/admins/sign_up",  :to => "dashboard#index"
+    # end
+
+    # devise_for :admins
+
+    devise_for :admins, :controllers => {
+                          :registrations  => 'registrations'
+                      }
+
+
+    resources :admins, :only => [:index] #:controller => 'admins' # , :controller => 'admins' # for maintenance of the Admin Users => the api_socialcentiv codebase uses a 'admins_controller'
+
+    resources :user, :controller => 'user', only: [:index,:edit,:show,:update]   # for basic maintenance of the customer users
+
+    # NOTE: deactivates the self-registration in the CMS while still enabling devise functionalities related to self registration
+    # match '/admins/sign_up', :to => 'devise/sessions#new', :via => [:get]
+
+    match 'users', :to => 'user#index', as: :users_path, :via => [:get]
+
+    # match '/sign_in' => "devise/sessions#new", :as => :login, :via => [:post]
+
+    # admin routes
+    resources :dashboard, :except => [:edit,:show,:update,:destroy,:new] do #, :only => [ :index ] # Main screen
+    end
+    resources :admin #, :except => [:show] #  :only => [ :index, :show, :new, :edit, :create, :update, :destroy ]
+
+  end  # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"

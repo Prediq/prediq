@@ -20,4 +20,4 @@
 config/application.yml
 
 /db/prediq*.sql
-
+/doc/credentials.txt

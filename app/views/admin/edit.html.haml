@@ -1,0 +1,17 @@
+- if params[:func] == 'admins'
+  - title "Edit Administrative User"
+- elsif params[:func] == 'internals'
+  - title "Edit Internal User"
+
+
+= form_for @user, :url => admin_path do |f|
+
+  = render :partial => 'form', :locals => { :f => f }
+
+
+-#= link_to "Show", user_path( user_params.merge( :id => @user ) )
+-#\|
+-#= link_to 'Back', user_index_path( user_params )
+
+= link_to 'Show', { :controller => :admin, :action => :show, :id => @user, :params => admin_params },  :class => "btn btn-primary"
+= link_to 'Back', { :controller => :admins, :action => :index, :params => admin_params },              :class => "btn btn-primary"

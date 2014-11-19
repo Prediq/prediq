@@ -19,7 +19,7 @@ default: &default
 
 development:
   <<: *default
-  database: prediq_development
+  database: prediq_api_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -49,7 +49,8 @@ test:
 #
 staging:
   <<: *default
-  host:     box308.bluehost.com
-  database: achievf2_api
-  username: achievf2_RbyApiU
-  password: <%= ENV['PREDIQ_DATABASE_PASSWORD'] %>
+  host:     mysql1-prediq.brownrice.com
+  database: prediq_api_staging
+  username: prediq_RbyApiU
+#  password: <%= ENV['PREDIQ_DATABASE_PASSWORD'] %>   prediq_RbyApiU
+  password: To^UEK}]G]fS

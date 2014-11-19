@@ -1,0 +1,18 @@
+server {
+  server_name <%= app_uri %>;
+  listen 80;
+  access_log /var/log/nginx/<%= app_uri %>_access.log;
+  error_log /var/log/nginx/<%= app_uri %>_error.log;
+
+  root /var/www/vhosts/<%= app_uri %>/current/public;
+
+  location / {
+    proxy_read_timeout 300;
+    proxy_connect_timeout 300;
+    proxy_redirect off;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://unix:/tmp/<%= app_uri %>.sock;
+  }
+}

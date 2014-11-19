@@ -1,0 +1,13 @@
+- title "Edit User"
+
+= form_for @user, :url => user_path do |f|
+
+  = render :partial => 'form', :locals => { :f => f }
+
+
+-#= link_to "Show", user_path( user_params.merge( :id => @user ) )
+-#\|
+-#= link_to 'Back', user_index_path( user_params )
+
+= link_to 'Show', { :controller => :user, :action => :show, :id => @user, :params => user_params },  :class => "btn btn-primary"
+= link_to 'Back', { :controller => :user, :action => :index, :params => user_params },               :class => "btn btn-primary"

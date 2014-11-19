@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/laserlemon/figaro
-  revision: 9f54872dfc1a972b4a971211706272f0f38495f4
-  ref: 9f54872dfc1a972b4a971211706272f0f38495f4
-  specs:
-    figaro (1.0.0.rc1)
-      thor (~> 0.14)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -40,7 +32,24 @@ GEM
       rake (>= 0.8.7)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
+    better_errors (2.0.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+      rack (>= 0.9.0)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
+    bootstrap-sass (2.3.2.2)
+      sass (~> 3.2)
     builder (3.2.2)
+    capistrano (2.15.5)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
+    capistrano-ext (1.2.1)
+      capistrano (>= 1.0.0)
+    chronic (0.10.2)
     coderay (1.1.0)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
@@ -49,6 +58,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.8.0)
+    debug_inspector (0.0.2)
     devise (3.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -57,7 +67,23 @@ GEM
       warden (~> 1.2.3)
     erubis (2.7.0)
     execjs (2.2.1)
+    figaro (1.0.0)
+      thor (~> 0.14)
+    haml (4.1.0.beta.1)
+      tilt
+    haml-rails (0.5.3)
+      actionpack (>= 4.0.1)
+      activesupport (>= 4.0.1)
+      haml (>= 3.1, < 5.0)
+      railties (>= 4.0.1)
+    highline (1.6.21)
     hike (1.2.3)
+    hpricot (0.8.6)
+    html2haml (1.0.1)
+      erubis (~> 2.7.0)
+      haml (>= 4.0.0.rc.1)
+      hpricot (~> 0.8.6)
+      ruby_parser (~> 3.1.1)
     i18n (0.6.11)
     jbuilder (2.1.3)
       activesupport (>= 3.0.0, < 5)
@@ -65,14 +91,27 @@ GEM
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
+    jquery-ui-rails (4.2.1)
+      railties (>= 3.2.16)
     json (1.8.1)
+    kaminari (0.16.1)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
+    libv8 (3.16.14.7)
     mail (2.6.1)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
     mime-types (2.3)
-    minitest (5.4.1)
+    minitest (5.4.3)
     multi_json (1.10.1)
     mysql2 (0.3.16)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.9.1)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     netrc (0.7.7)
     orm_adapter (0.5.0)
     pry (0.10.1)
@@ -104,9 +143,15 @@ GEM
     rake (10.3.2)
     rdoc (4.1.2)
       json (~> 1.4)
+    ref (1.0.5)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rolify (3.4.1)
+    ruby_parser (3.1.3)
+      sexp_processor (~> 4.1)
+    rvm-capistrano (1.5.5)
+      capistrano (~> 2.15.4)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -116,8 +161,9 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    slim (2.0.3)
-      temple (~> 0.6.6)
+    sexp_processor (4.4.4)
+    slim (2.1.0)
+      temple (~> 0.6.9)
       tilt (>= 1.3.3, < 2.1)
     slim-rails (2.1.5)
       actionpack (>= 3.0, < 4.2)
@@ -125,7 +171,6 @@ GEM
       railties (>= 3.0, < 4.2)
       slim (~> 2.0)
     slop (3.6.0)
-    spring (1.1.3)
     sprockets (2.11.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -135,7 +180,10 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
-    temple (0.6.8)
+    temple (0.6.10)
+    therubyracer (0.12.1)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -148,25 +196,40 @@ GEM
       json (>= 1.8.0)
     warden (1.2.3)
       rack (>= 1.0)
+    whenever (0.9.4)
+      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  annotate (~> 2.6.5)
+  annotate
+  better_errors
+  binding_of_caller
+  bootstrap-sass (~> 2.3.2.2)
+  capistrano
+  capistrano-ext
   coffee-rails (~> 4.0.0)
   devise (~> 3.3.0)
-  figaro!
+  figaro
+  haml-rails
+  html2haml
   jbuilder (~> 2.0)
   jquery-rails
+  jquery-ui-rails (~> 4.2.1)
+  kaminari
   mysql2
+  pry
   pry-rails (~> 0.3.2)
-  puma (~> 2.9.1)
+  puma
   rails (= 4.1.6)
   rest-client (~> 1.7.2)
-  sass-rails (~> 4.0.3)
+  rolify
+  rvm-capistrano
+  sass-rails (~> 4.0.2)
   sdoc (~> 0.4.0)
   slim-rails (~> 2.1.5)
-  spring
+  therubyracer
   turbolinks
   uglifier (>= 1.3.0)
+  whenever

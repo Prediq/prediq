@@ -1,0 +1,14 @@
+<% if admin_signed_in? %>
+    <div class="nav-collapse collapse user-nav">
+      <div class="user-info" style="position: relative; left: 0px; text-align: left;">
+        <!--<br/>-->
+        Logged in as: <%= current_admin.email %> [<%=current_admin.print_roles%>]
+      </div>
+      <ul class="nav" style="z-index: 10;position:relative;left:-14px;">
+        <li><%= link_to "My Account",   edit_admin_registration_path, :class => 'nav nav-collapse collapse' %></li>
+        <!--<li><%#= link_to "My Account",   edit_admin_path(current_admin.id),  :class => 'nav nav-collapse collapse' %></li>-->
+
+        <li><%= link_to "Log Out",      destroy_admin_session_path,   :class => 'nav nav-collapse collapse' %></li>
+      </ul>
+    </div>
+<% end %>

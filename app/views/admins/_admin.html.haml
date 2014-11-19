@@ -1,0 +1,38 @@
+.modal{:id => "role-options-#{admin.id}", :style => "display: none;"}
+  %form.simple_form.form-horizontal{"accept-charset" => "UTF-8", :action => "/cms/admin/#{admin.id}", :id => "edit_admin_#{admin.id}", :method => "post", :novalidate => "novalidate"}
+    %div{:style => "margin:0;padding:0;display:inline"}
+      %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+      %input{:name => "_method", :type => "hidden", :value => "put"}/
+      %input{:name => "authenticity_token", :type => "hidden", :value => form_authenticity_token}/
+
+      = hidden_field_tag 'page',              params[:page]
+      = hidden_field_tag 'num_per_page',      params[:num_per_page]
+      = hidden_field_tag 'sort',              params[:sort]
+      = hidden_field_tag 'direction',         params[:direction]
+      = hidden_field_tag 'last_name',         (params[:last_name].present?)   ? params[:last_name]        : nil
+      = hidden_field_tag 'first_name',        (params[:first_name].present?)  ? params[:first_name] : nil
+      = hidden_field_tag 'func',              (params[:func].present?)        ? params[:func] : nil
+
+    .modal-header
+      %a.close{"data-dismiss" => "modal"} ×
+      %h3 Change Role
+    .modal-body
+      .control-group.radio_buttons.optional.user_role_ids
+        .controls
+          -#- Role.all.each do |role|
+          - eval("Role.#{params[:func]}").each do |role|
+            - if current_admin.has_any_role?( :superadmin )
+              %label.radio.inline
+                = role.name
+                <input class="radio_buttons optional" id="admin_role_ids_#{role.id}" name="admin[role_ids]" type="radio" value="#{role.id}" #{(admin.role_ids.include?( role.id ) ? "checked='checked'" : nil )} />
+            - elsif current_user.has_any_role?( :admin )
+              -# allow admins to see all roles but superadmin
+              - if role.name != 'superadmin'
+                %label.radio.inline
+                  = role.name
+                <input class="radio_buttons optional" id="admin_role_ids_#{role.id}" name="admin[role_ids]" type="radio" value="#{role.id}" #{(admin.role_ids.include?( role.id ) ? "checked='checked'" : nil )} />
+
+    .modal-footer
+      %input.btn.btn-primary{:name => "commit", :type => "submit", :value => "Change Role"}/
+      %a.btn.btn-primary{"data-dismiss" => "modal", :href => "#", :type => "button"} Close
+
