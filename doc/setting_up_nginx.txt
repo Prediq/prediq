@@ -1,0 +1,42 @@
+deploy@staging-dbmaster:/var/www/vhosts$ cat /etc/nginx/sites-enabled/default
+server {
+  server_name db.socialcentiv.net;
+  listen 80;
+  access_log /var/log/nginx/pg_data_access.log;
+  error_log /var/log/nginx/pg_data_error.log;
+
+  root /var/www/vhosts/pg_data/current/public;
+
+  location / {
+    proxy_read_timeout 300;
+    proxy_connect_timeout 300;
+    proxy_redirect off;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://unix:///var/www/vhosts/pg_data/shared/puma/pg_data.sock;
+  }
+}
+
+deploy@staging-dbmaster:/var/www/vhosts$ cat /etc/nginx/sites-enabled/pg_data
+server {
+  server_name db.socialcentiv.net;
+  listen 80;
+  access_log /var/log/nginx/pg_data_access.log;
+  error_log /var/log/nginx/pg_data_error.log;
+
+  root /var/www/vhosts/pg_data/current/public;
+
+  location / {
+    proxy_read_timeout 300;
+    proxy_connect_timeout 300;
+    proxy_redirect off;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://unix:///var/www/vhosts/pg_data/shared/puma/pg_data.sock;
+  }
+}
+
+
+The key here is that puma.rb also references the same unix:///var socket
