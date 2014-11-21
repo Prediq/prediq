@@ -56,13 +56,13 @@ after that do a "cap deploy:cold" (does migrations) and when that is good do a:
 rake db:setup
 =end
 
-# set :app_name, 'api-socialcentiv-com'  # set in staging.rb as
+# set :app_name, 'prediq_api'  # set in staging.rb as
 set :user, 'deploy'
 
 # for the rvm-capistrano gem:
 set :rvm_ruby_string, :local               # use the same ruby as used locally for deployment
 set :rvm_autolibs_flag, "read-only"        # more info: rvm help autolibs
-set :rvm_ruby_string, 'ruby-2.1.1@api-socialcentiv-com'
+set :rvm_ruby_string, 'ruby-2.1.5@prediq'
 # for the create_vhost_apache task
 set :ruby_path, '/home/deploy/.rvm/rubies/ruby-2.1.1/bin/ruby'
 

@@ -4,27 +4,32 @@
 # example of database template
 
 base: &base
-  adapter: postgresql
-  encoding: unicode
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 5
   username: <%= db_user %>
-  password: <%= Capistrano::CLI.ui.ask('Enter Postgres database password: ') %>
-  host: <%= db_local_domain %>
+  password: <%= Capistrano::CLI.ui.ask('Enter mySQL database password: ') %>
+  host: <%= Capistrano::CLI.ui.ask('Enter mySQL database host ip address: ') %>
+  port: <%= Capistrano::CLI.ui.ask('Enter mySQL database host port: ') %>
 
 development:
   database: <%= application %>_development
+  socket: /tmp/mysql.sock
   <<: *base
 
 staging:
   database: <%= application %>_staging
-  pool: 25
+  socket: /var/run/mysqld/mysqld.sock
   <<: *base
 
 test:
   database: <%= application %>_test
+  socket: /tmp/mysql.sock
   <<: *base
 
 production:
   database: <%= application %>_production
-  pool: 25
+  socket: /var/run/mysqld/mysqld.sock
   <<: *base
 

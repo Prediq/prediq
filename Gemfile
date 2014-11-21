@@ -36,6 +36,8 @@ gem 'therubyracer',  platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+gem 'foreman'
+
 # for the datepicker
 gem 'jquery-ui-rails', '~> 4.2.1'
 # Devise

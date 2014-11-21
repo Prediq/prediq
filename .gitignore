@@ -18,6 +18,7 @@
 .vagrant
 .DS_Store
 config/application.yml
+config/database.yml
 
 /db/prediq*.sql
 /doc/credentials.txt

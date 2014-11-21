@@ -82,7 +82,7 @@ Capistrano::Configuration.instance.load do
 
       run "#{sudo} sudo su - postgres -c \"#{ dbcs.join(' && ') }\""
 
-      db_pass = Capistrano::CLI.ui.ask('Enter Postgres database password (it should be the same as the password you just typed in): ')
+      db_pass = Capistrano::CLI.ui.ask('Enter mySQL database password (it should be the same as the password you just typed in): ')
       db_str  = "create user socialcompass with password \'#{ db_pass }\' superuser createdb createrole"
       run "#{sudo} sudo su - postgres -c \"psql -c \\\"#{db_str}\\\"\""
       #run "#{sudo} sudo su - postgres -c \"createuser -s -P socialcompass \""
