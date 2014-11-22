@@ -27,8 +27,8 @@ set :rvm_shell, '/home/deploy/.rvm/bin/rvm-shell'
 #    Servers
 #############################################################
 
-app_server1 = 'apisc01.socialcentiv.biz' #see note below on role :app
-app_server2 = 'apisc02.socialcentiv.biz'
+app_server1 = 'ruby1-prediq.brownrice.com' #see note below on role :app
+# app_server2 = 'apisc02.socialcentiv.biz'
 
 set :user, 'deploy'
 set :db_user, 'socialcompass'
@@ -40,16 +40,15 @@ set :db_local_domain, '10.208.165.208'
 
 set :app_role, false
 set :port, 22
-role(:app) { [ app_server1, app_server2, { app_role: true } ] }
-role :web, app_server1, app_server2
+role(:app) { [ app_server1, { app_role: true } ] }
+role :web, app_server1 #, app_server2
 role :db, db_domain, :primary => true
 #############################################################
 #	git
 #############################################################
 
 set :scm, :git
-# set :repository, 'git@github.com:SocialCompass/api-socialcentiv-com.git'
-set :repository, 'git@github.com:HipLogiq-Development/api-socialcentiv-com.git'
+set :repository, 'git@github.com:Prediq/prediq.git'
 # set :branch, 'master'
 set :branch, 'deploy_refactor'
 #set :repository_cache, "git_cache"

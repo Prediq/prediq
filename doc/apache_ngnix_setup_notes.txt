@@ -1,0 +1,1466 @@
+
+Setting up a Bare Server from Rackspace
+
+1.  log on to Rackspace and create your server
+
+Performance 1
+    Ubuntu 14.04
+    1GB RAM
+    1 vCPU
+    20GB SSD system disk
+    200Mb/s network bandwidth
+
+2. Follow the Rackspace docs here:
+
+        http://www.rackspace.com/knowledge_center/article/configuring-bagcsic-security-0#LogIntoYourServer,
+
+    A. using the original password 'LLmTent7rUwy',
+
+        $ ssh root@23.253.126.41 and change the root password (root / c0tt0nC$ndy)
+
+    B.  Add the 'deploy' user with sudo access (deploy / blu3sonia)
+
+    C.  on OS X, get the program 'ssh-copy-id' (brew install ssh-copy-id) and generate your private and public keys
+        if you do not already have them.
+
+        1.  $ ssh-keygen -t rsa
+        2.  cd ~/.ssh
+        2.  $ ssh-copy-id id_rsa.pub deploy@23.253.126.41
+
+3.  Edit / create your ~/.ssh/config file
+
+    Host	    apisc01
+    HostName    23.253.126.41
+    User 		deploy
+    Port 		22
+    PasswordAuthentication 	no
+
+4.  Edit the /etc/ssh/sshd_config file on the server
+
+    nano /etc/ssh/sshd_config
+
+    and make this section look like this:
+
+    # Authentication:
+    LoginGraceTime 120
+    PermitRootLogin no
+    PasswordAuthentication no
+    UseDNS no
+    AllowUsers deploy
+    StrictModes yes
+
+    Restarting ssh
+
+    Now we'll restart the ssh service.  Make sure you stay logged in while you restart ssh and test it with a new connection.
+    That way if something goes wrong you can troubleshoot it more easily.
+
+    On most distributions the service is "sshd", and you restart it with the command:
+
+    # sudo service sshd restart
+
+    On Ubuntu and some other distributions it's called "ssh", and is restarted with a similar command:
+
+    $ sudo service ssh restart
+
+    root@api-sc-01:~# sudo service ssh restart
+    ssh stop/waiting
+    ssh start/running, process 26374
+
+5. Update your package sources
+
+    $ sudo apt-get update
+
+6.  Install shorewall instead of the doc's suggested 'iptables' method:
+
+    http://blog.jeff-owens.com/shorewall-firewall-on-ubuntu-feisty-vps-part-3/
+
+    EDIT: the example docs have moved to:
+
+    /usr/share/doc/shorewall/examples/one-interface/
+
+    deploy@api-sc-01:/etc/shorewall$ ll /usr/share/doc/shorewall/examples/one-interface/
+    total 80
+    drwxr-xr-x 2 root root  4096 May 12 22:03 ./
+    drwxr-xr-x 6 root root  4096 May 12 22:03 ../
+    -rw-r--r-- 1 root root   860 Jan 30 21:18 interfaces
+    -rw-r--r-- 1 root root  6199 Jan 30 23:17 interfaces.annotated.gz
+    -rw-r--r-- 1 root root   806 Jan 30 21:18 policy
+    -rw-r--r-- 1 root root  2974 Jan 30 23:17 policy.annotated.gz
+    -rw-r--r-- 1 root root  1126 Jan 30 21:18 README.txt
+    -rw-r--r-- 1 root root  1322 Jan 30 21:18 rules
+    -rw-r--r-- 1 root root 12043 Jan 30 23:17 rules.annotated.gz
+    -rw-r--r-- 1 root root 20013 Jan 30 23:17 shorewall.conf.annotated.gz
+    -rw-r--r-- 1 root root  1798 Jan 30 21:18 shorewall.conf.gz
+    -rw-r--r-- 1 root root   737 Jan 30 21:18 zones
+    -rw-r--r-- 1 root root  3234 Jan 30 23:17 zones.annotated.gz
+    deploy@api-sc-01:/etc/shorewall$ ll /usr/share/doc/shorewall/examples/one-interface/interfaces
+    -rw-r--r-- 1 root root 860 Jan 30 21:18 /usr/share/doc/shorewall/examples/one-interface/interfaces
+
+    A.  Copy the files feom a different server - they now reside on apisc01 so get them from there /etc/shorewall/
+
+        $ cd /etc/shorewall
+
+        $ cp -v /usr/share/doc/shorewall/examples/one-interface/interfaces .
+        $ cp -v /usr/share/doc/shorewall/examples/one-interface/policy .
+        $ cp -v /usr/share/doc/shorewall/examples/one-interface/rules .
+        $ cp -v /usr/share/doc/shorewall/examples/one-interface/zones .
+
+    B.  edit the interfaces file
+
+        $ nano /etc/shorewall/interfaces
+
+
+    C.  edit the zones file
+
+        $ nano /etc/shorewall/zones
+
+    D.  edit the policy file
+
+        $ nano /etc/shorewall/policy
+
+
+    E.  edit the rules file
+
+        $ nano /etc/shorewall/rules
+        NOTE: don't forget to add the line for postgres access on the db_sc_01 server
+        ACCEPT          net             fw              tcp     5432
+
+    F.  edit the shorewall file
+
+        $ nano /etc/default/shorewall.conf
+
+    G. restart shorewall
+
+        $ invoke-rc.d shorewall start
+
+====================================================================================================================================================
+                                                        Database Specific Notes
+====================================================================================================================================================
+
+6(db). download postgres and setup user and database
+
+  A. sudo apt-get install postgres && sudo apt-get install postgresql-9.3
+
+  A. su - postgres && psql
+
+  B. CREATE USER socialcompass with PASSWORD '1x3Ekwals3' SUPERUSER CREATEDB CREATEROLE
+
+  C. create databases
+
+    i. CREATE DATABASE "api-socialcentiv-com_development"
+
+    ii. CREATE DATABASE "api-socialcentiv-com_test"
+
+    iii. CREATE DATABASE "api-socialcentiv-com_staging"
+
+    iv. CREATE DATABASE "api-socialcentiv-com_production"
+
+  D. Enable remote connections
+
+    i. edit /etc/postgresql/[VERSION]/main/pg_hba.conf
+
+    ii. append the addresses of all remote staging or production servers (echo "host     all             all             23.253.227.126          md5" >> /etc/postgresql/9.3/main/pg_hba.conf)
+
+    iii. edit /etc/postgresql/[VERSION]/main/postgreql.conf
+
+    iv. append * listen addresses (shorewall will block all unallowed connections) (echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf)
+
+  E. Restart Postgres
+
+    i. sudo service postgresql restart
+
+  F. Add TCP and UDP rules for postgres to shorewall and restart it
+
+    i. echo  "ACCEPT          net             fw              tcp     5432" >> /etc/shorewall/rules
+
+    ii. echo  "ACCEPT          net             fw              udp     5432" >> /etc/shorewall/rules
+
+    iii. sudo shorewall restart
+
+    iv. TEST connection on clients! psql -h 23.253.227.126 -U socialcompass -d api-socialcentiv-com_staging
+
+    v. Database server is fully setup!
+
+====================================================================================================================================================
+
+7.  Install Git
+
+    $ sudo apt-get install git-core
+
+8.  Install nginx and setup custom modifications
+
+    A. sudo apt-get install nginx
+
+    B. modify /etc/nginx/nginx.conf (replace with addendum I)
+
+    C. SUDOERS FILE EDITS
+
+        i. sudo -i && visudo
+
+        ii. Modify sudoers with appendix K (gives cap deploy scripts access to /etc/init and several other commands for easier cap deploys)
+
+9.  Install ruby with rvm: https://www.digitalocean.com/community/articles/how-to-install-ruby-on-rails-on-ubuntu-12-04-lts-precise-pangolin-with-rvm
+
+    A. $ sudo apt-get install curl
+
+    B. $ \curl -L https://get.rvm.io | bash -s stable
+
+    C. $ rvm requirements
+
+
+Install the necessary new software packages:
+sudo apt-get -y install apache2 apache2-prefork-dev autoconf bison build-essential curl git-core imagemagick libapr1-dev libaprutil1-dev libcurl4-openssl-dev libid3-3.8.3-dev libreadline6 libreadline6-dev libsqlite3-0 libsqlite3-dev libssl-dev libxml2-dev libxslt-dev libyaml-dev openssl sqlite3 zlib1g zlib1g-dev
+
+10. Test if deployable with capistrano
+
+    A. Add this server's ip address to the cap deploy script (config/deploy/staging.rb / config/deploy/production.rb)
+
+    B. run cap <ENVIRONMENT> deploy in the root of the app directory
+
+    C. check output of cap for issues, if all works you should only be prompted for a password once
+
+cat /var/log/shorewall-init.log
+
+23.253.126.41
+root / c0tt0nC$ndy
+
+deploy / blu3sonia
+
+
+http://www.jacobtomlinson.co.uk/2013/01/24/ssh-copy-id-os-x/
+
+
+**************************************************************************
+
+Appendix A interfaces
+
+ deploy@fetapp01:~$ cat /etc/shorewall/interfaces
+
+#
+# Shorewall version 4.0 - Sample Interfaces File for two-interface configuration.
+# Copyright (C) 2006 by the Shorewall Team
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# See the file README.txt for further details.
+#------------------------------------------------------------------------------
+# For information about entries in this file, type "man shorewall-interfaces"
+###############################################################################
+FORMAT 2
+###############################################################################
+#ZONE	INTERFACE	OPTIONS
+net     eth0            dhcp,tcpflags,nosmurfs,routefilter,logmartians,sourceroute=0
+loc     eth1            tcpflags,nosmurfs,routefilter,logmartians
+
+Appendix B policy
+
+deploy@fetapp01:~$ cat /etc/shorewall/policy
+#
+# Shorewall version 4.0 - Sample Policy File for two-interface configuration.
+# Copyright (C) 2006 by the Shorewall Team
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# See the file README.txt for further details.
+#------------------------------------------------------------------------------
+# For information about entries in this file, type "man shorewall-policy"
+###############################################################################
+#SOURCE		DEST		POLICY		LOG LEVEL	LIMIT:BURST
+
+loc		    net		    ACCEPT
+fw          loc         ACCEPT
+fw          net         ACCEPT
+net		    all		    DROP		info
+# THE FOLLOWING POLICY MUST BE LAST
+all		all		REJECT		info
+
+Appendix C rules
+
+
+deploy@fetapp01:~$ cat /etc/shorewall/rules
+#
+# Shorewall version 4.0 - Sample Rules File for two-interface configuration.
+# Copyright (C) 2006,2007 by the Shorewall Team
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# See the file README.txt for further details.
+#------------------------------------------------------------------------------
+# For information about entries in this file, type "man shorewall-rules"
+######################################################################################################################################################################################
+#ACTION		SOURCE		DEST		PROTO	DEST	SOURCE		ORIGINAL	RATE		USER/	MARK	CONNLIMIT	TIME         HEADERS         SWITCH
+#							PORT	PORT(S)		DEST		LIMIT		GROUP
+#SECTION ALL
+#SECTION ESTABLISHED
+#SECTION RELATED
+SECTION NEW
+ACCEPT net fw tcp 22
+ACCEPT loc fw tcp 80
+ACCEPT net fw tcp 80
+
+Ping/ACCEPT net $FW
+# NOTE: Add this next one on the pg server:
+ACCEPT net fw tcp 5432
+#
+
+
+Appendix D shorewall.conf
+
+deploy@fetapp01:~$ cat /etc/shorewall/shorewall.conf
+###############################################################################
+#
+#  Shorewall Version 4 -- /etc/shorewall/shorewall.conf
+#
+#  For information about the settings in this file, type "man shorewall.conf"
+#
+#  Manpage also online at http://www.shorewall.net/manpages/shorewall.conf.html
+###############################################################################
+#		       S T A R T U P   E N A B L E D
+###############################################################################
+
+STARTUP_ENABLED=Yes
+
+###############################################################################
+#		              V E R B O S I T Y
+###############################################################################
+
+VERBOSITY=1
+
+###############################################################################
+#		                L O G G I N G
+###############################################################################
+
+BLACKLIST_LOGLEVEL=
+
+LOG_MARTIANS=Yes
+
+LOG_VERBOSITY=2
+
+LOGALLNEW=
+
+LOGFILE=/var/log/messages
+
+LOGFORMAT="Shorewall:%s:%s:"
+
+LOGTAGONLY=No
+
+LOGLIMIT=
+
+MACLIST_LOG_LEVEL=info
+
+RELATED_LOG_LEVEL=
+
+SFILTER_LOG_LEVEL=info
+
+SMURF_LOG_LEVEL=info
+
+STARTUP_LOG=/var/log/shorewall-init.log
+
+TCP_FLAGS_LOG_LEVEL=info
+
+###############################################################################
+#	L O C A T I O N	  O F	F I L E S   A N D   D I R E C T O R I E S
+###############################################################################
+
+CONFIG_PATH="${CONFDIR}/shorewall:${SHAREDIR}/shorewall"
+
+GEOIPDIR=/usr/share/xt_geoip/LE
+
+IPTABLES=
+
+IP=
+
+IPSET=
+
+LOCKFILE=
+
+MODULESDIR=
+
+PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin"
+
+PERL=/usr/bin/perl
+
+RESTOREFILE=restore
+
+SHOREWALL_SHELL=/bin/sh
+
+SUBSYSLOCK=""
+
+TC=
+
+###############################################################################
+#		D E F A U L T   A C T I O N S / M A C R O S
+###############################################################################
+
+ACCEPT_DEFAULT=none
+DROP_DEFAULT=Drop
+NFQUEUE_DEFAULT=none
+QUEUE_DEFAULT=none
+REJECT_DEFAULT=Reject
+
+###############################################################################
+#                        R S H / R C P  C O M M A N D S
+###############################################################################
+
+RCP_COMMAND='scp ${files} ${root}@${system}:${destination}'
+RSH_COMMAND='ssh ${root}@${system} ${command}'
+
+###############################################################################
+#			F I R E W A L L	  O P T I O N S
+###############################################################################
+
+ACCOUNTING=Yes
+
+ACCOUNTING_TABLE=filter
+
+ADD_IP_ALIASES=No
+
+ADD_SNAT_ALIASES=No
+
+ADMINISABSENTMINDED=Yes
+
+AUTO_COMMENT=Yes
+
+AUTOMAKE=No
+
+BLACKLISTNEWONLY=Yes
+
+CLAMPMSS=No
+
+CLEAR_TC=Yes
+
+COMPLETE=No
+
+DELETE_THEN_ADD=Yes
+
+DETECT_DNAT_IPADDRS=No
+
+DISABLE_IPV6=No
+
+DONT_LOAD=
+
+DYNAMIC_BLACKLIST=Yes
+
+EXPAND_POLICIES=Yes
+
+EXPORTMODULES=Yes
+
+FASTACCEPT=No
+
+FORWARD_CLEAR_MARK=
+
+IMPLICIT_CONTINUE=No
+
+IPSET_WARNINGS=Yes
+
+IP_FORWARDING=Keep
+
+KEEP_RT_TABLES=No
+
+LEGACY_FASTSTART=Yes
+
+LOAD_HELPERS_ONLY=No
+
+MACLIST_TABLE=filter
+
+MACLIST_TTL=
+
+MANGLE_ENABLED=Yes
+
+MAPOLDACTIONS=No
+
+MARK_IN_FORWARD_CHAIN=No
+
+MODULE_SUFFIX=ko
+
+MULTICAST=No
+
+MUTEX_TIMEOUT=60
+
+NULL_ROUTE_RFC1918=No
+
+OPTIMIZE=0
+
+OPTIMIZE_ACCOUNTING=No
+
+REQUIRE_INTERFACE=No
+
+RESTORE_DEFAULT_ROUTE=Yes
+
+RETAIN_ALIASES=No
+
+ROUTE_FILTER=Yes
+
+SAVE_IPSETS=No
+
+TC_ENABLED=Internal
+
+TC_EXPERT=No
+
+TC_PRIOMAP="2 3 3 3 2 3 1 1 2 2 2 2 2 2 2 2"
+
+TRACK_PROVIDERS=No
+
+USE_DEFAULT_RT=No
+
+USE_PHYSICAL_NAMES=No
+
+ZONE2ZONE=2
+
+###############################################################################
+#			P A C K E T   D I S P O S I T I O N
+###############################################################################
+
+BLACKLIST_DISPOSITION=DROP
+
+MACLIST_DISPOSITION=REJECT
+
+RELATED_DISPOSITION=ACCEPT
+
+SMURF_DISPOSITION=DROP
+
+SFILTER_DISPOSITION=DROP
+
+TCP_FLAGS_DISPOSITION=DROP
+
+################################################################################
+#			P A C K E T  M A R K  L A Y O U T
+################################################################################
+
+TC_BITS=
+
+PROVIDER_BITS=
+
+PROVIDER_OFFSET=
+
+MASK_BITS=
+
+ZONE_BITS=0
+
+################################################################################
+#                            L E G A C Y  O P T I O N
+#                      D O  N O T  D E L E T E  O R  A L T E R
+################################################################################
+
+IPSECFILE=zones
+
+
+Appendix E zones
+
+deploy@fetapp01:~$ cat /etc/shorewall/zones
+#
+# Shorewall version 4.0 - Sample Zones File for two-interface configuration.
+# Copyright (C) 2006 by the Shorewall Team
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# See the file README.txt for further details.
+#------------------------------------------------------------------------------
+# For information about entries in this file, type "man shorewall-zones"
+###############################################################################
+#ZONE	TYPE	OPTIONS			IN			OUT
+#					OPTIONS			OPTIONS
+fw	firewall
+net	ipv4
+loc	ipv4
+
+
+Appendix F passenger installation output
+
+        Checking for required software...
+
+         * Checking for C compiler...
+              Found: yes
+              Location: /usr/bin/cc
+         * Checking for C++ compiler...
+              Found: yes
+              Location: /usr/bin/c++
+         * Checking for Curl development headers with SSL support...
+              Found: yes
+              curl-config location: /usr/bin/curl-config
+              Header location: /usr/include/curl/curl.h
+              Version: libcurl 7.35.0
+              Usable: yes
+              Supports SSL: yes
+         * Checking for OpenSSL development headers...
+              Found: yes
+              Location: /usr/include/openssl/ssl.h
+         * Checking for Zlib development headers...
+              Found: yes
+              Location: /usr/include/zlib.h
+         * Checking for Apache 2...
+              Found: yes
+              Location of httpd: /usr/sbin/apache2
+              Apache version: 2.4.7
+         * Checking for Apache 2 development headers...
+              Found: yes
+              Location of apxs2: /usr/bin/apxs2
+         * Checking for Rake (associated with /home/deploy/.rvm/gems/ruby-2.1.1/wrappers/ruby)...
+              Found: yes
+              Location: /home/deploy/.rvm/gems/ruby-2.1.1/wrappers/rake
+         * Checking for OpenSSL support for Ruby...
+              Found: yes
+         * Checking for RubyGems...
+              Found: yes
+         * Checking for Ruby development headers...
+              Found: yes
+              Location: /home/deploy/.rvm/rubies/ruby-2.1.1/include/ruby-2.1.0/ruby.h
+         * Checking for rack...
+              Found: yes
+         * Checking for Apache Portable Runtime (APR) development headers...
+              Found: yes
+              Location: /usr/bin/apr-1-config
+              Version: 1.5.1
+         * Checking for Apache Portable Runtime Utility (APU) development headers...
+              Found: yes
+              Location: /usr/bin/apu-1-config
+              Version: 1.5.3
+
+        --------------------------------------------
+
+        Sanity checking Apache installation...
+        AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 2001:4800:7817:103:e732:f790:ff04:bf66. Set the 'ServerName' directive globally to suppress this message
+        AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 2001:4800:7817:103:e732:f790:ff04:bf66. Set the 'ServerName' directive globally to suppress this message
+        AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 2001:4800:7817:103:e732:f790:ff04:bf66. Set the 'ServerName' directive globally to suppress this message
+        AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 2001:4800:7817:103:e732:f790:ff04:bf66. Set the 'ServerName' directive globally to suppress this message
+        All good!
+        AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 2001:4800:7817:103:e732:f790:ff04:bf66. Set the 'ServerName' directive globally to suppress this message
+
+        --------------------------------------------
+
+        Your system does not have a lot of virtual memory
+
+        Compiling Phusion Passenger works best when you have at least 1024 MB of virtual
+        memory. However your system only has 990 MB of total virtual memory (990 MB
+        RAM, 0 MB swap). It is recommended that you temporarily add more swap space
+        before proceeding. You can do it as follows:
+
+          sudo dd if=/dev/zero of=/swap bs=1M count=1024
+          sudo mkswap /swap
+          sudo swapon /swap
+
+        See also https://wiki.archlinux.org/index.php/Swap for more information about
+        the swap file on Linux.
+
+        If you cannot activate a swap file (e.g. because you're on OpenVZ, or if you
+        don't have root privileges) then you should install Phusion Passenger through
+        DEB/RPM packages. For more information, please refer to the manual, section
+        "Installation":
+
+          /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42/doc/Users guide Apache.html
+          http://www.modrails.com/documentation/Users%20guide%20Apache.html
+
+        Press Ctrl-C to abort this installer (recommended).
+        Press Enter if you want to continue with installation anyway.
+
+        So we add the swap file:
+
+          sudo dd if=/dev/zero of=/swap bs=1M count=1024
+          sudo mkswap /swap
+          sudo swapon /swap
+
+
+    Almost there!
+
+    Please edit your Apache configuration file, and add these lines:
+
+       LoadModule passenger_module /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42/buildout/apache2/mod_passenger.so
+       <IfModule mod_passenger.c>
+         PassengerRoot /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42
+         PassengerDefaultRuby /home/deploy/.rvm/gems/ruby-2.1.1/wrappers/ruby
+       </IfModule>
+
+    After you restart Apache, you are ready to deploy any number of web
+    applications on Apache, with a minimum amount of configuration!
+
+
+        --------------------------------------------
+
+        Deploying a web application: an example
+
+        Suppose you have a web application in /somewhere. Add a virtual host to your
+        Apache configuration file and set its DocumentRoot to /somewhere/public:
+
+           <VirtualHost *:80>
+              ServerName www.yourhost.com
+              # !!! Be sure to point DocumentRoot to 'public'!
+              DocumentRoot /somewhere/public
+              <Directory /somewhere/public>
+                 # This relaxes Apache security settings.
+                 AllowOverride all
+                 # MultiViews must be turned off.
+                 Options -MultiViews
+                 # Uncomment this if you're on Apache >= 2.4:
+                 #Require all granted
+              </Directory>
+           </VirtualHost>
+
+        And that's it! You may also want to check the Users Guide for security and
+        optimization tips, troubleshooting and other useful information:
+
+          /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42/doc/Users guide Apache.html
+          http://www.modrails.com/documentation/Users%20guide%20Apache.html
+
+        Enjoy Phusion Passenger, a product of Phusion (www.phusion.nl) :-)
+        https://www.phusionpassenger.com
+
+        Phusion Passenger is a trademark of Hongli Lai & Ninh Bui.
+
+***********************************************************************************************************************
+                                   Appendix G Notes on Jruby and Incompatible Gems
+***********************************************************************************************************************
+
+    Tested with Jruby 1.7.12 running ruby 1.9.3 in compatibility mode
+
+    byebug (development dependency) is not compatible with jruby (but can be if jruby is forced to run in ruby 2.0.0 compat mode)
+
+    ruby-stemmer (general dependency) is not compatible with jruby
+        This is a critical incompatibility as Joshua requires requires ruby-stemmer for linguistics support.
+        ruby-stemmer uses various c-extensions that are available in Jruby, but they will require setting Jruby opts before running jruby every time.
+
+
+***********************************************************************************************************************
+                          Appending H Nginx Config Default /etc/nginx/sites-available/api-socialcentiv-com
+***********************************************************************************************************************
+
+# You may add here your
+# server {
+#   ...
+# }
+# statements for each of your virtual hosts to this file
+
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+#server {
+#   listen 8000;
+#   listen somename:8080;
+#   server_name somename alias another.alias;
+#   root html;
+#   index index.html index.htm;
+#
+#   location / {
+#       try_files $uri $uri/ =404;
+#   }
+#}
+
+
+# HTTPS server
+#
+#server {
+#   listen 443;
+#   server_name localhost;
+#
+#   root html;
+#   index index.html index.htm;
+#
+#   ssl on;
+#   ssl_certificate cert.pem;
+#   ssl_certificate_key cert.key;
+#
+#   ssl_session_timeout 5m;
+#
+#   ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+#   ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+#   ssl_prefer_server_ciphers on;
+#
+#   location / {
+#       try_files $uri $uri/ =404;
+#   }
+#}
+
+upstream api-socialcentiv-com-staging {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  # for UNIX domain socket setups:
+  server unix:/tmp/api-socialcentiv-com-staging.socket fail_timeout=0;
+}
+
+server {
+    # if you're running multiple servers, instead of "default" you should
+    # put your main domain name here
+    listen 80 default;
+
+    # you could put a list of other domain names this application answers
+    server_name api.socialcentiv-staging.com;
+
+    root /var/www/vhosts/api.socialcentiv-staging.com/current/public;
+    access_log /var/log/nginx/api-socialcentiv-staging_access.log;
+    rewrite_log on;
+
+    location / {
+        #all requests are sent to the UNIX socket
+        proxy_pass  http://api.socialcentiv-staging.com;
+        proxy_redirect     off;
+
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+
+        client_max_body_size       10m;
+        client_body_buffer_size    128k;
+
+        proxy_connect_timeout      90;
+        proxy_send_timeout         90;
+        proxy_read_timeout         90;
+
+        proxy_buffer_size          4k;
+        proxy_buffers              4 32k;
+        proxy_busy_buffers_size    64k;
+        proxy_temp_file_write_size 64k;
+    }
+
+    # if the request is for a static resource, nginx should serve it directly
+    # and add a far future expires header to it, making the browser
+    # cache the resource and navigate faster over the website
+    # this probably needs some work with Rails 3.1's asset pipe_line
+    location ~ ^/(images|javascripts|stylesheets|system)/  {
+      root /var/www/vhosts/api.socialcentiv-staging.com/current/public;
+      expires max;
+      break;
+    }
+}
+
+*************************************************************************************************************
+                               Appendix I Nginx Config /etc/nginx/nginx.conf
+*************************************************************************************************************
+
+# /etc/nginx/nginx.conf
+user deploy;
+
+# Change this depending on your hardware
+worker_processes 4;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+    multi_accept on;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay off;
+    # server_tokens off;
+
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+    gzip_disable "msie6";
+
+    # gzip_vary on;
+    gzip_proxied any;
+    gzip_min_length 500;
+    # gzip_comp_level 6;
+    # gzip_buffers 16 8k;
+    # gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    ##
+    # Virtual Host Configs
+    ##
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+
+*************************************************************************************************************
+                               Appendix J Passenger and Apache Setup
+*************************************************************************************************************
+
+Install apache
+
+    $ sudo apt-get install apache2
+
+Install passenger: http://www.rabblemedia.net/installing-rvm-ruby-on-rails-and-passenger-on-ubuntu.html
+
+    A. $ deploy@api-sc-01:~$ gem install passenger
+
+    B. Install some requirements:
+
+        1.  sudo apt-get -y install libcurl4-openssl-dev
+        2.  sudo apt-get -y install apache2-threaded-dev
+        3.  sudo apt-get -y install libapr1-dev
+        4.  sudo apt-get -y install libaprutil1-dev
+
+    And then Passenger for Apache:
+
+        $ rvmsudo passenger-install-apache2-module
+
+        $ ll /etc/apache2/mods-enabled/
+        lrwxrwxrwx 1 root 32 Oct 21  2013 passenger.conf -> ../mods-available/passenger.conf
+        lrwxrwxrwx 1 root 32 Oct 21  2013 passenger.load -> ../mods-available/passenger.load
+
+        deploy@fetapp01:~$ cat /etc/apache2/mods-enabled/passenger.conf
+        PassengerRoot /home/deploy/.rvm/gems/ruby-1.9.3-p448/gems/passenger-4.0.20
+        PassengerDefaultRuby /home/deploy/.rvm/wrappers/ruby-1.9.3-p448/ruby
+
+        deploy@fetapp01:~$ cat /etc/apache2/mods-enabled/passenger.load
+        LoadModule passenger_module /home/deploy/.rvm/gems/ruby-1.9.3-p448/gems/passenger-4.0.20/buildout/apache2/mod_passenger.so
+
+
+    C. create the /etc/apache2/mods-available/passenger.load & /etc/apache2/mods-available/passenger.conf files
+
+        1. edit /etc/apache2/mods-available/passenger.load and paste:
+
+            LoadModule passenger_module /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42/buildout/apache2/mod_passenger.so
+
+            into it
+
+        2.  edit the /etc/apache2/mods-available/passenger.conf file and paste:
+
+             PassengerRoot /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42
+             PassengerDefaultRuby /home/deploy/.rvm/gems/ruby-2.1.1/wrappers/ruby
+
+             into it
+
+        3.  symlink then both
+
+            a.  ln -s /etc/apache2/mods-available/passenger.load /etc/apache2/mods-enabled/passenger.load
+            b.  ln -s /etc/apache2/mods-available/passenger.conf /etc/apache2/mods-enabled/passenger.conf
+
+        4.  Start apache
+
+            /etc/init.d/apache2 restart
+
+     **** Use these next ones:
+
+            Please edit your Apache configuration file, and add these lines:
+
+               LoadModule passenger_module /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42/buildout/apache2/mod_passenger.so
+               <IfModule mod_passenger.c>
+                 PassengerRoot /home/deploy/.rvm/gems/ruby-2.1.1/gems/passenger-4.0.42
+                 PassengerDefaultRuby /home/deploy/.rvm/gems/ruby-2.1.1/wrappers/ruby
+               </IfModule>
+
+        http://stackoverflow.com/questions/7159851/setting-up-passenger-phusion-on-ubuntu-11-04
+
+    D.  Enable mod_rewrite for Apache:
+
+        sudo a2enmod rewrite
+
+*************************************************************************************************************
+                               Appendix K sudoers file setup
+*************************************************************************************************************
+
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+deploy  ALL=(ALL:ALL) ALL
+Cmnd_Alias NGINX = /etc/init.d/nginx start,/etc/init.d/nginx restart,/etc/init.d/nginx stop, rvmsudo bundle exec foreman export upstart /etc/init*, /sbin/start api$
+deploy  ALL=(ALL) NOPASSWD: NGINX
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+
+it looks like for the new user email we just need to add a new email method to the BusinessOwnerMailer
+
+hp [10:01 AM]
+and a view for it, of course
+
+hp [10:03 AM]
+and we deliver it at the end of the transaction in Api::Users::Create#run! (edited)
+
+hp [10:05 AM]
+and we'll need to work with hal/lindsey to get the right content for it
+
+hp [10:06 AM]
+and that we give whatever information they need to log in without being insecure
+
+
+I suppose the safest thing is just sending a welcome email with just a link to the login page and implement forgot password later
+
+ok, so at the end of:
+
+Api::Users::Create#run!
+
+We deliver the Welcome email
+
+We can send the login link and the pwd (I have  recently received emails like this with the pwd so no worries for now)
+
+ so you can `git checkout -b my-feature` and then `git push -u origin my-feature
+
+
+PUT /users/:id and just update the digest subscription to never
+
+
+
+Reports:
+
+https://docs.google.com/a/hiplogiq.com/document/d/1UWr1Io_xgWRE4cLJVYabCdA1oK08yRmqXQ4rtyJPFZw/edit#
+
+
+
+
+
+
+
+
+      # https://dev.twitter.com/docs/auth/authorizing-request
+      # https://dev.twitter.com/docs/auth/implementing-sign-twitter
+
+inspired by: http://stackoverflow.com/questions/10784916/how-do-i-use-get-and-post-on-github-using-access-tokens
+
+require 'net/https'
+require 'uri'
+
+uri = uri = URI.parse("https://api.twitter.com/")
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+
+headers = { "Authentication" => "token" }
+request = Net::HTTP::Get.new(uri.request_uri, headers)
+response = http.request(request)
+response.body # => A string containing the JSON response
+
+
+# twitter oauth callback url
+  match 'auth/twitter/callback', to: 'twitter_auth#callback'
+
+  gem 'omniauth-twitter'                # twitter authorization for BusinessOwner's to authorize their twitter account to post to twitter
+
+
+
+1. Zach does the "start_twitter_process" call that fires the POST oauth/request_token call to twitter
+
+The callback_url is sent in that call, along with other things:
+
+oauth_callback="http%3A%2F%2Flocalhost%2Fsign-in-with-twitter%2F",
+              oauth_consumer_key="cChZNFj6T5R0TigYB9yd1w",
+              oauth_nonce="ea9ec8429b68d6b77cd5600adbbb0456",
+              oauth_signature="F1Li3tvehgcraF8DMJ7OyxO4w9Y%3D",
+              oauth_signature_method="HMAC-SHA1",
+              oauth_timestamp="1318467427",
+              oauth_version="1.0"
+
+That call gets back:
+
+oauth_callback_confirmed
+oauth_token
+oauth_token_secret
+
+That gets sent back to Zach in the response
+
+2.  With Zach now having the the:
+
+ oauth_callback_confirmed
+ oauth_token
+ oauth_token_secret
+
+from Step 1, Zach does:
+
+GET oauth/authorize?oauth_token=the_oauth_token
+
+and the user is redirected to twitter and puts in their credentials, then if everything goes well, twitter
+fires the callback_url, the API converts the request_token to an access_token (Step 3 in the twitter docs),
+creates the TwitterUser record, and Pusher is fired so Zach can know how it went
+
+
+
+link to the edited google doc:
+https://docs.google.com/a/hiplogiq.com/document/d/11dFWFrxY-6JU8lDhIFqFlUynDFGWaiZRNSLQRWTkSSY/edit
+
+
+Original Version (out of date, use the google doc link above)
+
+Twitter Oauth Process
+
+1). Zach does the POST oauth/request_token, sending in the callback_url "receive_twitter_auths"
+    A. The response comes back with the "oauth_callback_confirmed" param if "true" then the:
+         1.  oauth_token
+         2.  oauth_token_secret
+       are stored for use in Step 2
+
+       Who stores 1 & 2, Zach or Rails? Or does Zach need a call into the API to store 1 & 2 in a Business or User
+       model
+
+2). Upon success in step 1) the user is redirected to GET oauth/authenticate?oauth_token=the_auth_token_we_just_got
+
+    A). Upon successful authentication twitter calls the callback_url "receive_twitter_auths" sending in:
+        1.  oauth_token
+        2.  oauth_verifier
+
+3) Upon success in Step 2) we need to convert the request_token (oauth_token) into an access token
+
+    A. Rails does the POST to oauth/access_token using 1 & 2 we received in Step 2).
+
+        1.  A successful response comes back with the
+                oauth_token
+                oauth_token_secret that we can use, together with the
+                TWITTER_CONSUMER_KEY and
+                TWITTER_CONSUMER_SECRET
+
+            to construct the new twitter_user record if it does not already exist; if it does exist we are good and do
+            not need to create it
+
+Appendix A
+
+twitter_user schema
+
+    avatar_url         :string(255)
+    consumer_key       :string(255)
+    consumer_secret    :string(255)
+    created_at         :datetime
+    id                 :integer          not null, primary key
+    id_str             :string(255)
+    oauth_token        :string(255)
+    oauth_token_secret :string(255)
+    screen_name        :string(255)
+
+************************************************************************************************************************
+
+pusher notifications
+
+https://github.com/pusher/pusher-gem
+
+pusher.com
+
+dev@hiplogiq.com / the social one
+
+curl -H "Content-Type: application/json" -d "hello world" "http://api.pusherapp.com/apps/1480/channels/Vn8mz0sp/events?name=my_event&body_md5=5eb63bbbe01eeed093cb22bb8f5acdc3&auth_version=1.0&auth_key=765ec374ae0a69f4ce44&auth_timestamp=1398700795&auth_signature=316e724321a7ffafaee6c6c8435c5a7695254402f17d9b19e92c6c2c9edead3f"
+
+[3] pry(main)> SocialCentiv::Application.config.autoload_paths
+=> ["/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/external_resources/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/users/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/data_sift/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/full_contact/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/twitter/"]
+
+
+[4] pry(main)> BusinessOwner.all.limit 1
+  BusinessOwner Load (3.3ms)  SELECT "users".* FROM "users" WHERE "users"."type" IN ('BusinessOwner') LIMIT 1
+=> []
+[5] pry(main)>
+
+API Doc link:
+https://docs.google.com/a/hiplogiq.com/document/d/1UWr1Io_xgWRE4cLJVYabCdA1oK08yRmqXQ4rtyJPFZw/edit#
+
+
+GET “/conversations?business_id=234523&status=replied_to”
+
+lib/extensions/action_controller_extensions.rb:  def require_and_permit(*args)
+Williams-MacBook-Pro ~/hiplogiq/api-socialcentiv-com: rails c
+Loading development environment (Rails 4.0.4)
+[1] pry(main)> def require_and_permit(*args)
+[1] pry(main)*   args.each do |arg|
+[1] pry(main)*     case arg
+[1] pry(main)*     when Array
+[1] pry(main)*       arg.each{ |key| self.require(key) }
+[1] pry(main)*     when Hash
+[1] pry(main)*       arg.each{ |key, value| self[key].require_and_permit(value) }
+[1] pry(main)*     else
+[1] pry(main)*       self.require(arg)
+[1] pry(main)*     end
+[1] pry(main)*   end
+[1] pry(main)*
+[1] pry(main)*   self.permit(*args)
+[1] pry(main)* end
+=> :require_and_permit
+[2] pry(main)> require_and_permit({business_id: 1, status: 'replied_to'})
+NoMethodError: undefined method `[]' for main:Object
+from (pry):7:in `block (2 levels) in require_and_permit'
+[3] pry(main)> ActionController::Parameters.require_and_permit({business_id: 1, status: 'replied_to'})
+ArgumentError: odd number of arguments for Hash
+from /Users/billkiskin/.rvm/gems/ruby-2.1.1@global/gems/activesupport-4.0.4/lib/active_support/hash_with_indifferent_access.rb:81:in `[]'
+[4] pry(main)> ActionController::Parameters.require_and_permit({:business_id => 1, :status => 'replied_to'})
+ArgumentError: odd number of arguments for Hash
+from /Users/billkiskin/.rvm/gems/ruby-2.1.1@global/gems/activesupport-4.0.4/lib/active_support/hash_with_indifferent_access.rb:81:in `[]'
+[5] pry(main)> abc = ActionController::Parameters.new()
+=> {}
+[6] pry(main)> abc.require_and_permit(:business_id, :status)
+ActionController::ParameterMissing: param is missing or the value is empty: business_id
+from /Users/billkiskin/.rvm/gems/ruby-2.1.1@global/gems/actionpack-4.0.4/lib/action_controller/metal/strong_parameters.rb:183:in `require'
+[7] pry(main)> abc[:business_id] = 1
+=> 1
+[8] pry(main)> abc[:status]='replied_to'
+=> "replied_to"
+[9] pry(main)> abc
+=> {"business_id"=>1, "status"=>"replied_to"}
+[10] pry(main)> abc.require_and_permit(:business_id, :status)
+=> {"business_id"=>1, "status"=>"replied_to"}
+[11] pry(main)> Conversation.where(abc.require_and_permit(:business_id, :status))
+  Conversation Load (4.7ms)  SELECT "conversations".* FROM "conversations" WHERE "conversations"."business_id" = 1 AND "conversations"."status" = 'replied_to'
+=> [#<Conversation id: 2, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 2, reply_tweet_id: 3, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 4, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 5, reply_tweet_id: 6, status: "replied_to", ml_category: "relevant",
+ #<Conversation id: 6, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 8, reply_tweet_id: 9, status: "replied_to", ml_category: "relevant",
+ #<Conversation id: 8, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 11, reply_tweet_id: 12, status: "replied_to", ml_category: "relevant
+ #<Conversation id: 10, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 14, reply_tweet_id: 15, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 12, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 17, reply_tweet_id: 18, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 14, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 20, reply_tweet_id: 21, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 16, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 23, reply_tweet_id: 24, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 18, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 26, reply_tweet_id: 27, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 20, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 29, reply_tweet_id: 30, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 22, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 32, reply_tweet_id: 33, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 24, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 35, reply_tweet_id: 36, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 26, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 38, reply_tweet_id: 39, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 28, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 41, reply_tweet_id: 42, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 30, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 44, reply_tweet_id: 45, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 32, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 47, reply_tweet_id: 48, status: "replied_to", ml_category: "relevan
+ #<Conversation id: 34, business_id: 1, reply_campaign_id: 1, lbc_tweet_id: 50, reply_tweet_id: 51, status: "replied_to", ml_category: "relevan
+
+
+[10] pry(main)> SocialCentiv::Application.config.autoload_paths
+=> ["/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/external_resources/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/models/users/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/errors",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/data_sift/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/full_contact/",
+ "/Users/billkiskin/hiplogiq/api-socialcentiv-com/app/services/external/twitter/"]
+
+SocialCentiv::Application.config.i18n.load_path
+
+
+
+=begin
+
+[
+  {
+    "report_date": "2014-04-01",
+    "prev_num_convs": "17",
+    "curr_num_convs": "0"
+  },
+  {
+    "report_date": "2014-04-02",
+    "prev_num_convs": "14",
+    "curr_num_convs": "0"
+  },
+  {
+    "report_date": "2014-04-03",
+    "prev_num_convs": "10",
+    "curr_num_convs": "0"
+  },
+  {
+    "report_date": "2014-04-04",
+    "prev_num_convs": "14",
+    "curr_num_convs": "0"
+  },
+
+rails_root = `pwd`.chop
+    dbconfig = YAML.load(File.read("#{rails_root}/config/database.yml"))[Rails.env]
+
+
+    # Use PGconn to feed SQL straight to the Postgres database instead of going through Active Record
+    dbname    = dbconfig["database"]
+    user      = dbconfig["username"]
+    password  = dbconfig["password"]
+    host      = dbconfig["host"]
+
+    @@pgconn = PGconn.connect( :host => host, :port => 5432, :dbname => dbname, :user => user, :password => password )
+
+      num_recs_imported = @@pgconn.exec("SELECT COUNT(*) as num_recs FROM customers;" )[0]['num_recs']
+
+      puts "************ process_customer_file.num_recs_to_import, num_recs_imported: #{num_recs_to_import}, #{num_recs_imported}"
+
+      result_message( "customer_addresses import", num_recs_to_import, num_recs_imported )  # returns a message starting with either "SUCCESS" or "ERROR"
+
+{
+    "start_date": "Fri, 09 May 2014 10:19:05 -0500",
+    "conv_datapoints":[25,32,55,64,33,43,33,22,55,54,32,86,44,,,,],
+    "prev_num_conversations":987,
+    "curr_num_convs":1025,
+    "cust_datapoints":[103,98,54,77,89,102,45,98,39,59,67,83,99,,,],
+    "prev_num_custs":302,
+    "curr_num_custs":413,
+    "conversion_rate":0.4029
+}
+
+  def self.from_time(time)
+    where(created_at: (time.beginning_of_month)..(time.end_of_month))
+  end
+
+[10] pry(main)> business = Business.active.where(:id => params[:id]).first
+  Business Load (1.4ms)  SELECT "businesses".* FROM "businesses" WHERE "businesses"."archived_at" IS NULL AND "businesses"."status" = 'active' AND "businesses"."id" = 1 ORDER BY "businesses"."id" ASC LIMIT 1
+=> #<Business id: 1, business_owner_id: 1, name: "Pei Wei", twitter_user_id: 1, status: "active", archived_at: nil, created_at: "2014-04-22 20:24:07", updated_at: "2014-04-22 20:24:07", industry_id: nil, subdomain: "pei-wei", finished_setup_at: nil>
+
+[19] pry(main)> curr_conversations = business.conversations.replied_to.from_time(DateTime.new(curr_year, curr_month, 1))
+  Conversation Load (1.2ms)  SELECT "conversations".* FROM "conversations" WHERE "conversations"."business_id" = $1 AND "conversations"."status" = 'replied_to' AND ("conversations"."created_at" BETWEEN '2014-05-01 00:00:00.000000' AND '2014-05-31 23:59:59.000000')  [["business_id", 1]]
+
+[20] pry(main)> prev_conversations = business.conversations.replied_to.from_time(DateTime.new(prev_year, prev_month, 1))
+  Conversation Load (5.7ms)  SELECT "conversations".* FROM "conversations" WHERE "conversations"."business_id" = $1 AND "conversations"."status" = 'replied_to' AND ("conversations"."created_at" BETWEEN '2014-04-01 00:00:00.000000' AND '2014-04-30 23:59:59.000000')  [["business_id", 1]]
+
+[21] pry(main)> curr_prospects = business.prospects.from_time(DateTime.new(curr_year, curr_month, 1))
+  Prospect Load (35.0ms)  SELECT "prospects".* FROM "prospects" WHERE "prospects"."business_id" = $1 AND ("prospects"."created_at" BETWEEN '2014-05-01 00:00:00.000000' AND '2014-05-31 23:59:59.000000')  [["business_id", 1]]
+
+[22] pry(main)> prev_prospects = business.prospects.from_time(DateTime.new(prev_year, prev_month, 1))
+  Prospect Load (1.4ms)  SELECT "prospects".* FROM "prospects" WHERE "prospects"."business_id" = $1 AND ("prospects"."created_at" BETWEEN '2014-04-01 00:00:00.000000' AND '2014-04-30 23:59:59.000000')  [["business_id", 1]]
+
+
+=end
+=begin
+    conversations_data = ActiveRecord::Base.connection.execute(
+        "SELECT
+            dates.report_date,
+            -- conv.c_created_at,
+            CASE
+              WHEN conv.prev_num_convs IS NULL
+              THEN 0
+              ELSE conv.prev_num_convs
+            END as prev_num_convs,
+            CASE
+              WHEN conv.curr_num_convs IS NULL
+              THEN 0
+              ELSE conv.curr_num_convs
+            END as curr_num_convs
+          FROM
+          (
+            SELECT '#{prev_month_beg_date}'::date + s.t as report_date FROM generate_series(0, ('#{curr_month_end_date}'::date - '#{prev_month_beg_date}'::date) ) as s(t)
+          ) dates
+            LEFT JOIN
+            (
+              SELECT
+                -- c.id as c_id,
+                c.created_at::date as c_created_at,
+
+                CASE
+                  WHEN c.created_at::date BETWEEN '#{prev_month_beg_date}' AND '#{prev_month_end_date}'
+                  THEN COUNT(c.created_at::date)
+                ELSE 0
+                END as prev_num_convs,
+                CASE
+                  WHEN c.created_at::date BETWEEN '#{curr_month_beg_date}' AND '#{curr_month_end_date}'
+                  THEN COUNT(c.created_at::date)
+                ELSE 0
+                END as curr_num_convs
+
+              FROM conversations c
+              WHERE
+                c.status = 'replied_to' AND business_id = #{business_id}
+              GROUP BY
+                  c_created_at
+            ) conv
+            ON conv.c_created_at = dates.report_date
+            ORDER BY
+                dates.report_date,
+                  conv.c_created_at;"
+    )
+=end
+
+=begin
+    customers_data = ActiveRecord::Base.connection.execute(
+    "SELECT
+        dates.report_date,
+        -- cust.c_created_at,
+        CASE
+          WHEN cust.prev_num_custs IS NULL
+          THEN 0
+          ELSE cust.prev_num_custs
+        END as prev_num_custs,
+        CASE
+          WHEN cust.curr_num_custs IS NULL
+          THEN 0
+          ELSE cust.curr_num_custs
+        END as curr_num_custs
+      FROM
+      (
+        SELECT '#{prev_month_beg_date}'::date + s.t as report_date FROM generate_series(0, ('#{curr_month_end_date}'::date - '#{prev_month_beg_date}'::date) ) as s(t)
+      ) dates
+        LEFT JOIN
+        (
+          SELECT
+            -- c.id as c_id,
+            c.created_at::date as c_created_at,
+
+            CASE
+              WHEN c.created_at::date BETWEEN '#{prev_month_beg_date}' AND '#{prev_month_end_date}'
+              THEN COUNT(c.created_at::date)
+            ELSE 0
+            END as prev_num_custs,
+            CASE
+              WHEN c.created_at::date BETWEEN '#{curr_month_beg_date}' AND '#{curr_month_end_date}'
+              THEN COUNT(c.created_at::date)
+            ELSE 0
+            END as curr_num_custs
+
+          FROM prospects c
+          WHERE
+            business_id = #{business_id}
+          GROUP BY
+              c_created_at
+        ) cust
+        ON cust.c_created_at = dates.report_date
+        ORDER BY
+            dates.report_date,
+              cust.c_created_at;"
+    )
+=end
+
+
+psql -U socialcompass -d api-socialcentiv-com_development -f doc/update_conversations.sql
+
+
+2012  git pull
+ 2015  git pull
+ 2017  git branch
+ 2018  git checkout deploy_codebase
+ 2019  git branch -d master
+ 2020  git branch -D master
+ 2021  git checkout -b master
+ 2022  git pull live master
+ 2024  git branch
+ 2025  git checkout master_staging
+ 2026  git checkout -b master_staging_sav
+ 2027  git checkout master_staging
+ 2028  git merge master
+
+
+********************************************************************************
+

@@ -6,7 +6,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'deploy')
 require "capistrano_database"
 require "nginx_config_generator"
 require "puma_config_generator"
-require "shorewall_config_generator"
+# require "shorewall_config_generator"
 
 
 =begin
@@ -64,9 +64,9 @@ set :rvm_ruby_string, :local               # use the same ruby as used locally f
 set :rvm_autolibs_flag, "read-only"        # more info: rvm help autolibs
 set :rvm_ruby_string, 'ruby-2.1.5@prediq'
 # for the create_vhost_apache task
-set :ruby_path, '/home/deploy/.rvm/rubies/ruby-2.1.1/bin/ruby'
+set :ruby_path, '/home/deploy/.rvm/rubies/ruby-2.1.5/bin/ruby'
 
-set :bundle_path, '/home/deploy/.rvm/gems/ruby-2.1.1@global/bin/bundle'
+set :bundle_path, '/home/deploy/.rvm/gems/ruby-2.1.5@global/bin/bundle'
 
 set :keep_releases, 10
 
@@ -223,11 +223,11 @@ end
 before  "deploy:update_code",         "deploy:chmod_deploy_directories"
 after   "deploy:create_symlink",      "deploy:figaro:setup"   # create_symlink is a default cap task that symlinks the latest release to current
 after   "deploy:figaro:setup",        "deploy:figaro:symlink"
-after   'deploy:figaro:symlink',      'procfile:symlink'
-after   'procfile:symlink',           'deploy:database_yml:symlink'
+after   'deploy:figaro:symlink',      'deploy:database_yml:symlink' #'procfile:symlink'
+# after   'procfile:symlink',           'deploy:database_yml:symlink'
 # #after 'procfile:symlink',           'foreman:export'
-# after :deploy, 'deploy:cleanup' # there is not an implicit cleanup task so we explicitly call it
-after :deploy, 'deploy:cleanup_releases'
+after :deploy, 'deploy:cleanup' # there is not an implicit cleanup task so we explicitly call it
+# after :deploy, 'deploy:cleanup_releases'
 
 
 
