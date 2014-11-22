@@ -3,10 +3,17 @@ require 'bundler/capistrano'
 require 'capistrano/ext/multistage'
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'deploy')
 # prompts for DB password and ip address (or hostname), symlinks database.yml
-require "capistrano_database"
-require "nginx_config_generator"
-require "puma_config_generator"
+# require "capistrano_database"
+# require "nginx_config_generator"
+# require "puma_config_generator"
 # require "shorewall_config_generator"
+
+puts `ls -l config/`
+puts
+
+require "./config/deploy/file_templates/capistrano_database"
+require "./config/deploy/file_templates/nginx_config_generator"
+require "./config/deploy/file_templates/puma_config_generator"
 
 
 =begin
