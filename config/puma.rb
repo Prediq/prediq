@@ -1,11 +1,11 @@
 #!/usr/bin/env puma
 
 # config/puma.rb
-# start puma with:
+# start puma manually with:
 # RAILS_ENV=staging bundle exec puma -C ./config/puma.rb
 
-application_path  = '/var/www/vhosts/prediq-staging.com/current'
 railsenv          = ENV["RAILS_ENV"]
+application_path  = "/var/www/vhosts/prediq_api_#{railsenv}.com/current"
 
 if railsenv != 'development' || railsenv.empty?
   directory application_path

@@ -139,6 +139,18 @@ namespace :deploy do
     end
   end
 
+  namespace :secrets do
+    desc "SCP transfer secrets.yml configuration to the shared folder"
+    task :setup, roles: :app do
+      transfer :up, "config/application.yml", "#{shared_path}/config/application.yml", :via => :scp
+    end
+
+    desc "Symlink secrets.yml to the release path"
+    task :symlink, roles: :app do
+      run "ln -sf #{shared_path}/config/secrets.yml #{release_path}/config/application.yml"
+    end
+  end
+
   namespace :database_yml do
     desc "SCP transfer the config/database.yml to the shared config folder"
     task :setup, roles: :app do
@@ -228,6 +240,8 @@ before  "deploy:update_code",         "deploy:chmod_deploy_directories"
 after   "deploy:create_symlink",      "deploy:figaro:setup"   # create_symlink is a default cap task that symlinks the latest release to current
 after   "deploy:figaro:setup",        "deploy:figaro:symlink"
 after   'deploy:figaro:symlink',      'deploy:database_yml:symlink' #'procfile:symlink'
+after   'deploy:database_yml:symlink','deploy:secrets:setup'
+after   'deploy:secrets:setup',       'deploy:secrets:symlink'
 # after   'procfile:symlink',           'deploy:database_yml:symlink'
 # #after 'procfile:symlink',           'foreman:export'
 after :deploy, 'deploy:cleanup' # there is not an implicit cleanup task so we explicitly call it
