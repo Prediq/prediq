@@ -1,0 +1,6 @@
+hung up on cleanup
+deploy   17859  0.0  0.0   9476  1252 pts/2    Ss+  12:13   0:00 bash -c sudo -p 'sudo password: ' ls -1dt /var/www/vhosts/prediq_api_staging.com/releases/* | tail -n
+root     17931  0.0  0.0  40812  1752 pts/2    S+   12:13   0:00 sudo -p sudo password:  ls -1dt /var/www/vhosts/prediq_api_staging.com/releases/20141122171229
+deploy   17932  0.0  0.0   4332   660 pts/2    S+   12:13   0:00 tail -n +11
+root     17933  0.0  0.0  41028  2040 pts/2    S+   12:13   0:00 sudo -p sudo password:  xargs rm -rf
+root     18025  0.0  0.0   4580   644 pts/2    S+   12:13   0:00 xargs rm -rf

@@ -18,7 +18,8 @@ set :gem_path, "/home/deploy/.rvm/gems/ruby-2.1.5@prediq_api:/home/deploy/.rvm/g
 default_run_options[:pty] = true
 set :chmod755, "app config db lib public vendor script script/* public/*"
 set :ssh_options, { :forward_agent => true }
-set :use_sudo, true
+# set :use_sudo, true
+set :use_sudo, false
 set :scm_verbose, true
 set :rails_env, 'staging'
 set :bundle_flags, '--deployment'
