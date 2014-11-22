@@ -14,22 +14,22 @@ base: &base
   port: 3306
 
 development:
-  database: <%= application %>_development
+  database: <%= db_prefix %>_development
   socket: /tmp/mysql.sock
   <<: *base
 
 staging:
-  database: <%= application %>_staging
+  database: <%= db_prefix %>_staging
   socket: /var/run/mysqld/mysqld.sock
   <<: *base
 
 test:
-  database: <%= application %>_test
+  database: <%= db_prefix %>_test
   socket: /tmp/mysql.sock
   <<: *base
 
 production:
-  database: <%= application %>_production
+  database: <%= db_prefix %>_production
   socket: /var/run/mysqld/mysqld.sock
   <<: *base
 

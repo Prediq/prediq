@@ -4,6 +4,7 @@
 
 set :application, 'prediq_api_staging.com'
 set :app_name,  'prediq_api_staging'
+set :db_prefix,  'prediq_api'
 set :app_uri,   application
 set :deploy_to, "/var/www/vhosts/#{app_uri}"
 set :gem_home, "/home/deploy/.rvm/gems/ruby-2.1.5@prediq_api"
