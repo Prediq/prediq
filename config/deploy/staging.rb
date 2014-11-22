@@ -52,7 +52,7 @@ role :db, db_domain, :primary => true
 set :scm, :git
 set :repository, 'git@github.com:Prediq/prediq.git'
 # set :branch, 'master'
-set :branch, 'master'
+set :branch, 'master_staging'
 #set :repository_cache, "git_cache"
 # set :deploy_via, :remote_cache         # http://help.github.com/capistrano/ says: In most cases you want to use this option, otherwise each deploy will do a full repository clone every time.
 #set :deploy_via, :checkout
