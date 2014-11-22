@@ -10,8 +10,8 @@ base: &base
   pool: 5
   username: <%= db_user %>
   password: <%= Capistrano::CLI.ui.ask('Enter mySQL database password: ') %>
-  host: <%= Capistrano::CLI.ui.ask('Enter mySQL database host ip address: ') %>
-  port: <%= Capistrano::CLI.ui.ask('Enter mySQL database host port: ') %>
+  host: <%= db_local_domain %>
+  port: 3306
 
 development:
   database: <%= application %>_development

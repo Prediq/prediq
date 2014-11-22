@@ -2,13 +2,13 @@
 #	Application ruby-2.1.1
 #############################################################
 
-set :application, 'api.socialcentiv-staging.com'
-set :app_name,  'api-socialcentiv-staging'
+set :application, 'prediq_api_staging.com'
+set :app_name,  'prediq_api_staging'
 set :app_uri,   application
 set :deploy_to, "/var/www/vhosts/#{app_uri}"
-set :gem_home, "/home/deploy/.rvm/gems/ruby-2.1.1@api-socialcentiv-com"
-set :gem_path, "/home/deploy/.rvm/gems/ruby-2.1.1@api-socialcentiv-com:/home/deploy/.rvm/gems/ruby-2.1.1@global" # got these last 2 via "gem info" on the app server's app root
-set :pg_version, "9.3"
+set :gem_home, "/home/deploy/.rvm/gems/ruby-2.1.5@prediq_api"
+set :gem_path, "/home/deploy/.rvm/gems/ruby-2.1.5@prediq_api:/home/deploy/.rvm/gems/ruby-2.1.5@global" # got these last 2 via "gem info" on the app server's app root
+# set :pg_version, "9.3"
 
 #############################################################
 #	Settings
@@ -31,12 +31,14 @@ app_server1 = 'ruby1-prediq.brownrice.com' #see note below on role :app
 # app_server2 = 'apisc02.socialcentiv.biz'
 
 set :user, 'deploy'
-set :db_user, 'socialcompass'
-set :app_domains, "#{app_server1},#{app_server2}" #comma delim string of servers (these must be ip-addresses)
-set :app_local_domains, '10.208.171.251,10.208.171.93' #same as above
+set :db_user, 'prediq_RbyApiU'
+set :app_domains, "#{app_server1}" #comma delim string of servers (these must be ip-addresses)
+# set :app_domains, "#{app_server1},#{app_server2}" #comma delim string of servers (these must be ip-addresses)
+# set :app_local_domains, '10.208.171.251,10.208.171.93' #same as above
+set :app_local_domains, '192.168.1.121' #same as above
 #set :dev_ip_addresses, '' #these ip addresses are added to the pg_hba file so devs or admins can access the database from their machines through a database browser
-set :db_domain, 'db.socialcentiv.biz'
-set :db_local_domain, '10.208.165.208'
+set :db_domain, 'mysql1-prediq.brownrice.com'
+set :db_local_domain, '192.168.1.123'
 
 set :app_role, false
 set :port, 22
@@ -50,7 +52,7 @@ role :db, db_domain, :primary => true
 set :scm, :git
 set :repository, 'git@github.com:Prediq/prediq.git'
 # set :branch, 'master'
-set :branch, 'deploy_refactor'
+set :branch, 'master'
 #set :repository_cache, "git_cache"
 # set :deploy_via, :remote_cache         # http://help.github.com/capistrano/ says: In most cases you want to use this option, otherwise each deploy will do a full repository clone every time.
 #set :deploy_via, :checkout

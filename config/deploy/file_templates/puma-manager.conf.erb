@@ -1,6 +1,6 @@
 # /etc/init/puma-manager.conf - manage a set of Pumas
 
-# This example config should work with Ubuntu 12.04+. It
+# This example config should work with Ubuntu 14.04+. It
 # allows you to manage multiple Puma instances with
 # Upstart, Ubuntu's native service management tool.
 #
@@ -20,13 +20,13 @@ stop on runlevel [06]
 
 # Set this to the number of Puma processes you want
 # to run on this machine
-# env PUMA_CONF="/etc/init/api-socialcentiv-staging-puma.conf" #USES STAGING
+# env PUMA_CONF="/etc/init/prediq_api_staging_puma.conf" #USES STAGING
 
 pre-start script
   for i in `ls /var/www/vhosts | grep "[^.|^..]" `; do
     path="/var/www/vhosts/$i/current"
 
-    #parse appnames like api.socialcentiv-staging.com into api-socialcentiv-staging
+    #parse appnames like prediq_api_staging.com into prediq-api-staging
     appname=`echo $i | sed 's/\./-/g' | sed 's/-com//g'` 
     #logger -t "puma-manager" "Starting $i"
     

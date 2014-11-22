@@ -20,7 +20,7 @@ Rails.application.routes.draw do
                       }
 
 
-    resources :admins, :only => [:index] #:controller => 'admins' # , :controller => 'admins' # for maintenance of the Admin Users => the api_socialcentiv codebase uses a 'admins_controller'
+    resources :admins, :only => [:index] #:controller => 'admins' # , :controller => 'admins' # for maintenance of the Admin Users => the prediq_api codebase uses a 'admins_controller'
 
     resources :user, :controller => 'user', only: [:index,:edit,:show,:update]   # for basic maintenance of the customer users
 
