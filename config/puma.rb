@@ -13,7 +13,7 @@ if railsenv != 'development' || railsenv.empty?
   pidfile         "#{application_path}/tmp/pids/puma-#{railsenv}.pid"
   state_path      "#{application_path}/tmp/pids/puma-#{railsenv}.state"
   stdout_redirect "#{application_path}/log/puma-#{railsenv}.stdout.log", "#{application_path}/log/puma-#{railsenv}.stderr.log"
-  bind            "unix:///tmp/prediq-#{railsenv}.com.sock"
+  bind            "unix:///tmp/prediq_api_#{railsenv}.com.sock"
   threads 0, 16
 end
 #activate_control_app "unix:///tmp/api.socialcentiv-#{railsenv}.com.sock"
