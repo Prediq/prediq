@@ -142,12 +142,12 @@ namespace :deploy do
   namespace :secrets do
     desc "SCP transfer secrets.yml configuration to the shared folder"
     task :setup, roles: :app do
-      transfer :up, "config/application.yml", "#{shared_path}/config/application.yml", :via => :scp
+      transfer :up, "config/secrets.yml", "#{shared_path}/config/secrets.yml", :via => :scp
     end
 
     desc "Symlink secrets.yml to the release path"
     task :symlink, roles: :app do
-      run "ln -sf #{shared_path}/config/secrets.yml #{release_path}/config/application.yml"
+      run "ln -sf #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     end
   end
 

@@ -1,0 +1,25 @@
+deploy@ruby1-prediq:/var/www/vhosts/prediq_api_staging.com$ ll /etc/nginx/sites-enabled/
+total 8
+drwxr-xr-x 2 root root 4096 Nov 22 14:52 ./
+drwxr-xr-x 5 root root 4096 Nov 22 14:52 ../
+lrwxrwxrwx 1 root root   49 Nov 22 14:52 default -> /etc/nginx/sites-available/prediq_api_staging.com
+
+deploy@ruby1-prediq:/var/www/vhosts/prediq_api_staging.com$ cat /etc/nginx/sites-enabled/default
+server {
+  server_name prediq_api_staging.com;
+  listen 80;
+  access_log /var/log/nginx/prediq_api_staging.com_access.log;
+  error_log /var/log/nginx/prediq_api_staging.com_error.log;
+
+  root /var/www/vhosts/prediq_api_staging.com/current/public;
+
+  location / {
+    proxy_read_timeout 300;
+    proxy_connect_timeout 300;
+    proxy_redirect off;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://unix:/tmp/prediq_api_staging.com.sock;
+  }
+}
