@@ -8,9 +8,6 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'deploy')
 # require "puma_config_generator"
 # require "shorewall_config_generator"
 
-puts `ls -l config/`
-puts
-
 require "./config/deploy/file_templates/capistrano_database"
 require "./config/deploy/nginx_config_generator"
 require "./config/deploy/puma_config_generator"

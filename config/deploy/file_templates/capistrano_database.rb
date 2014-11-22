@@ -61,7 +61,13 @@ Capistrano::Configuration.instance.load do
         <<: *base
       EOF
 
-      location = fetch(:template_dir, "config/deploy") + '/database.yml.erb'
+      puts "******************************************"
+      puts "******************************************"
+      puts "********* `ls -l config/deploy/file_templates` ************"
+      puts "******************************************"
+      puts "******************************************"
+
+      location = fetch(:template_dir, "config/deploy/file_templates") + '/database.yml.erb'
       template = File.file?(location) ? File.read(location) : default_template
 
       config = ERB.new(template)
