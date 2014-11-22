@@ -37,14 +37,14 @@ set :app_domains, "#{app_server1}" #comma delim string of servers (these must be
 # set :app_local_domains, '10.208.171.251,10.208.171.93' #same as above
 set :app_local_domains, '192.168.1.121' #same as above
 #set :dev_ip_addresses, '' #these ip addresses are added to the pg_hba file so devs or admins can access the database from their machines through a database browser
-set :db_domain, 'mysql1-prediq.brownrice.com'
+# set :db_domain, 'mysql1-prediq.brownrice.com'
 set :db_local_domain, '192.168.1.123'
 
 set :app_role, false
 set :port, 22
 role(:app) { [ app_server1, { app_role: true } ] }
 role :web, app_server1 #, app_server2
-role :db, db_domain, :primary => true
+# role :db, db_domain, :primary => true
 #############################################################
 #	git
 #############################################################
