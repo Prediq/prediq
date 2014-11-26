@@ -39,6 +39,7 @@
 #
 
 class User < ActiveRecord::Base
+
   self.table_name = "api_customer"
 
   validates :approved,          inclusion: [true, false]
