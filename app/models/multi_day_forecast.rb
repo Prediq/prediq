@@ -1,6 +1,6 @@
 # A SalesForecast is a multi-day sales prediction for a certain timespan.
 class MultiDayForecast
-  ENDPOINT = "http://api.bigmagma.com/get/forecast/sales"
+  # ENDPOINT = "http://api.bigmagma.com/get/forecast/sales"
 
   attr_reader :days, :response
 
@@ -36,7 +36,7 @@ class MultiDayForecast
   def get_information
     startdate = DateTime.now.strftime("%Y-%m-%d")
 
-    resource = RestClient::Resource.new(ENDPOINT)
+    resource = RestClient::Resource.new(Figaro.env.prediq_api_ip)
     self.raw_response = resource.get(
       params: {
         customerid: 2,

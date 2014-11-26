@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
-  root 'example_pages#welcome'
-  
+
+  # root 'example_pages#welcome'
+  root 'prediq_api#welcome'
+
   devise_for :users
 
-  get '/dashboard' => 'example_pages#dashboard'
+  # get '/dashboard' => 'example_pages#dashboard'
+  get '/dashboard' => 'prediq_api#dashboard'
 
   scope :path => :cms do
 
