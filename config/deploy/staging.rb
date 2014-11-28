@@ -46,7 +46,7 @@ set :app_role, false
 set :port, 22
 role(:app) { [ app_server1, { app_role: true } ] }
 role :web, app_server1 #, app_server2
-# role :db, db_domain, :primary => true
+role :db, app_server1, :primary => true
 #############################################################
 #	git
 #############################################################
