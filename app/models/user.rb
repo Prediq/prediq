@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   validates :approved,          inclusion: [true, false]
   validates :customer_group_id, presence: true
   validates :date_added,        presence: true # REVIEW
-  validates :fax,               presence: true # ...really?
+  # validates :fax,               presence: true # ...really?
   validates :firstname,         presence: true
   validates :lastname,          presence: true
   validates :newsletter,        inclusion: [true, false]

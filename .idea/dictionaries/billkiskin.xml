@@ -1,8 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="billkiskin">
     <words>
+      <w>closestweatherstation</w>
+      <w>currenttemp</w>
+      <w>firstname</w>
+      <w>lastname</w>
       <w>prediq</w>
       <w>startdate</w>
+      <w>weatherdata</w>
+      <w>weatherforecast</w>
+      <w>weatherstations</w>
     </words>
   </dictionary>
 </component>

@@ -57,6 +57,9 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 
 # REVIEW make a PrediqServceAPI gem?
 gem 'rest-client', '~> 1.7.2'
+#
+gem 'faraday'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

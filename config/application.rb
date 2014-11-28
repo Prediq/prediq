@@ -21,8 +21,27 @@ module Prediq
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
 
+    config.autoload_paths += Dir[ config.root.join('app', 'classes', '**', '**/') ]
+
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+
+    ApiBaseUrl = "http://#{Figaro.env.prediq_api_ip}"
+
+    ApiRoutes = {
+      sales_forecast:         "/get/forecast/sales",
+      historical_sales:       "/get/historical/sales",
+      weatherstations:        "/get/weather/weatherstations",
+      currenttemp:            "/get/weather/currenttemp",
+      weather_data:           "/get/weather/weatherdata",
+      weather_forecast:       "/get/weather/weatherforecast",
+      closestweatherstation:  "/get/geo/closestweatherstation",
+      location:               "/get/geo/location",
+      countries:              "/get/geo/countries",
+      country:                "/get/geo/country",
+
+    }
+
   end
 end

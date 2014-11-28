@@ -9,7 +9,6 @@ class PrediqApiController < ApplicationController
   end
 
   def dashboard
-    puts "***** current_user.id: #{current_user.id}"
     @dashboard_tab = true
     @forecast = MultiDayForecast.new(current_user).retrieve
   end

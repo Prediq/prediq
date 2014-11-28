@@ -67,6 +67,8 @@ GEM
       warden (~> 1.2.3)
     erubis (2.7.0)
     execjs (2.2.1)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     figaro (1.0.0)
       thor (~> 0.14)
     haml (4.1.0.beta.1)
@@ -104,6 +106,7 @@ GEM
     mime-types (2.3)
     minitest (5.4.3)
     multi_json (1.10.1)
+    multipart-post (2.0.0)
     mysql2 (0.3.16)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -211,6 +214,7 @@ DEPENDENCIES
   capistrano-ext
   coffee-rails (~> 4.0.0)
   devise (~> 3.3.0)
+  faraday
   figaro
   haml-rails
   html2haml
