@@ -35,7 +35,7 @@ Prediq API Calls
 
     curl -i -H "Accept: application/json" "http://api-prediq.brownrice.com/get/geo/country?country_id=223"
 
-NOTE: Use tc3@bigmagma.com as the user's email. id: 3
+NOTE: Use tc3@bigmagma.com / pleaseme as the user's email. id: 3
 
 ************************************************************************************************************************
 ************************************************************************************************************************
