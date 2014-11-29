@@ -18,18 +18,25 @@
             | Upper 80
           th
             | Upper 95
-        -@forecast.days.each do |day|
-          tr
-            td
-              =day.date.strftime('%m/%d/%y')
-            td
-              =day.estimate
-            td
-              =day.lower80
-            td
-              =day.lower95
-            td
-              =day.upper80
-            td
-              =day.upper95
+        / -@forecast.days.each do |day|
+        /   tr
+        /     td
+        /       =day.date.strftime('%m/%d/%y')
+        /     td
+        /       =day.estimate
+        /     td
+        /       =day.lower80
+        /     td
+        /       =day.lower95
+        /     td
+        /       =day.upper80
+        /     td
+        /       =day.upper95
+
+  <ipp:connectToIntuit></ipp:connectToIntuit>
+
+javascript:
+  intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: '/dashboard'});
+
+
           
