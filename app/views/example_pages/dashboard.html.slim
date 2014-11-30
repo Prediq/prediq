@@ -2,35 +2,35 @@
   #dashboard
     .col-lg-2
     .col-lg-8
-      h2
-        | 7 Day Forecast
-      table.table.table-striped.table-hover 
-        tr
-          th
-            | Date
-          th
-            | Forecast
-          th
-            | Lower 80
-          th
-            | Lower 95
-          th
-            | Upper 80
-          th
-            | Upper 95
-        -@forecast.days.each do |day|
-          tr
-            td
-              =day.date.strftime('%m/%d/%y')
-            td
-              =day.estimate
-            td
-              =day.lower80
-            td
-              =day.lower95
-            td
-              =day.upper80
-            td
-              =day.upper95
+      / h2
+      /   | 7 Day Forecast
+      / table.table.table-striped.table-hover
+      /   tr
+      /     th
+      /       | Date
+      /     th
+      /       | Forecast
+      /     th
+      /       | Lower 80
+      /     th
+      /       | Lower 95
+      /     th
+      /       | Upper 80
+      /     th
+      /       | Upper 95
+      /   -@forecast.days.each do |day|
+      /     tr
+      /       td
+      /         =day.date.strftime('%m/%d/%y')
+      /       td
+      /         =day.estimate
+      /       td
+      /         =day.lower80
+      /       td
+      /         =day.lower95
+      /       td
+      /         =day.upper80
+      /       td
+      /         =day.upper95
     
           

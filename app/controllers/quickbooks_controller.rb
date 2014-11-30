@@ -1,7 +1,7 @@
 class QuickbooksController < ApplicationController
 
   def authenticate
-    callback = 'http://localhost:3003/oauth_callback'
+    callback = "#{Rails.application.secrets.host}/oauth_callback"
     token = $qb_oauth_consumer.get_request_token(:oauth_callback => callback)
     session[:qb_request_token] = Marshal.dump(token)
     redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
@@ -20,10 +20,15 @@ class QuickbooksController < ApplicationController
       realm_id: realm_id
     )
     # store the token, secret & RealmID somewhere for this user, you will need all 3 to work with Quickbooks-Ruby
-    redirect_to '/quickbooks_success', notice: "Your QuickBooks account has been successfully linked."
+    redirect_to '/quickbooks_success'
   end
   
   def quickbooks_success
     
+  end
+  
+  def show
+    quickbooks_auth = current_user.quickbooks_auth
+    @customers = QuickbooksCommunicator.new(quickbooks_auth).customers_list
   end
 end

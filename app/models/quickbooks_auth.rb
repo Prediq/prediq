@@ -15,4 +15,8 @@
 
 class QuickbooksAuth < ActiveRecord::Base
   belongs_to :user
+  
+  def access_token
+    OAuth::AccessToken.new($qb_oauth_consumer, token, secret)
+  end
 end

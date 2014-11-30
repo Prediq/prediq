@@ -1,0 +1,14 @@
+table.table.table-striped.table-hover
+  tr
+    th
+      | Name
+    th
+      | Company
+  -@customers.each do |customer|
+    tr
+      td
+        -binding.pry
+        ="#{customer.given_name} #{customer.family_name}"
+      td
+        =customer.company_name
+        

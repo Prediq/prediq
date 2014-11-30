@@ -1,37 +1,37 @@
-.container-fluid#dashboard-container
+.container-fluid#dashboard-container style='text-align:center;'
   #dashboard
-    .col-lg-2
-    .col-lg-8
-      h2
-        | 14 Day Forecast
-      table.table.table-striped.table-hover 
-        tr
-          th
-            | Date
-          th
-            | Forecast
-          th
-            | Lower 80
-          th
-            | Lower 95
-          th
-            | Upper 80
-          th
-            | Upper 95
-        / -@forecast.days.each do |day|
-        /   tr
-        /     td
-        /       =day.date.strftime('%m/%d/%y')
-        /     td
-        /       =day.estimate
-        /     td
-        /       =day.lower80
-        /     td
-        /       =day.lower95
-        /     td
-        /       =day.upper80
-        /     td
-        /       =day.upper95
+  -if current_user.has_authorized_quickbooks?
+    =link_to 'View Quickbooks Data', '/quickbooks'
+      / h2
+      /   | 14 Day Forecast
+      / table.table.table-striped.table-hover
+      /   tr
+      /     th
+      /       | Date
+      /     th
+      /       | Forecast
+      /     th
+      /       | Lower 80
+      /     th
+      /       | Lower 95
+      /     th
+      /       | Upper 80
+      /     th
+      /       | Upper 95
+      /   / -@forecast.days.each do |day|
+      /   /   tr
+      /   /     td
+      /   /       =day.date.strftime('%m/%d/%y')
+      /   /     td
+      /   /       =day.estimate
+      /   /     td
+      /   /       =day.lower80
+      /   /     td
+      /   /       =day.lower95
+      /   /     td
+      /   /       =day.upper80
+      /   /     td
+      /   /       =day.upper95
 
 
           

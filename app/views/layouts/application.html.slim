@@ -47,7 +47,7 @@ html
     =javascript_include_tag "https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"
 
     javascript:
-      intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: 'http://localhost:3003/authenticate_quickbooks'});
+      intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: "#{Rails.application.secrets.host}/authenticate_quickbooks"});
     css:
       .intuit-button-container {
         width: 110px;

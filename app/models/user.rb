@@ -68,6 +68,10 @@ class User < ActiveRecord::Base
   def full_name
     "#{firstname} #{lastname}"
   end
+  
+  def has_authorized_quickbooks?
+    quickbooks_auth.try(:token).present?
+  end
 
   protected
 
