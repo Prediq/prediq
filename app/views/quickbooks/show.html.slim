@@ -1,4 +1,6 @@
-table.table.table-striped.table-hover
+h2
+  | List of customers in our quickbooks sandbox app
+table.table.table-striped.table-hover.customer-table
   tr
     th
       | Name
@@ -7,8 +9,11 @@ table.table.table-striped.table-hover
   -@customers.each do |customer|
     tr
       td
-        -binding.pry
         ="#{customer.given_name} #{customer.family_name}"
       td
         =customer.company_name
         
+css:
+  .customer-table {
+    width: 500px;
+  }
