@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141119165831) do
+ActiveRecord::Schema.define(version: 20141130023342) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -349,6 +349,17 @@ ActiveRecord::Schema.define(version: 20141119165831) do
     t.integer  "geo_zone_id",               null: false
     t.datetime "date_added",                null: false
     t.datetime "date_modified",             null: false
+  end
+
+  create_table "quickbooks_auths", force: true do |t|
+    t.integer  "user_id"
+    t.string   "token"
+    t.string   "secret"
+    t.string   "realm_id"
+    t.datetime "token_expires_at"
+    t.datetime "reconnect_token_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "roles", force: true do |t|

@@ -53,6 +53,8 @@ class User < ActiveRecord::Base
   validates :status,            inclusion: [true, false] # huh?
   validates :telephone,         presence: true # TODO: format
   validates :token,             presence: true # REVIEW
+  
+  has_one :quickbooks_auth
 
   after_initialize :set_defaults, if: :new_record?
 

@@ -6,8 +6,10 @@ Rails.application.routes.draw do
   devise_for :users
 
   # get '/dashboard' => 'example_pages#dashboard'
-  get '/dashboard' => 'prediq_api#dashboard'
-
+  get '/dashboard'               => 'prediq_api#dashboard'
+  get '/authenticate_quickbooks' => 'quickbooks#authenticate'
+  get '/oauth_callback'          => 'quickbooks#oauth_callback'
+  get '/quickbooks_success'      => 'quickbooks#quickbooks_success'
   scope :path => :cms do
 
     get '/',  to: "dashboard#index", as: 'default_route'

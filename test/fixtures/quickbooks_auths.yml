@@ -1,0 +1,32 @@
+# == Schema Information
+#
+# Table name: quickbooks_auths
+#
+#  created_at         :datetime
+#  id                 :integer          not null, primary key
+#  realm_id           :string(255)
+#  reconnect_token_at :datetime
+#  secret             :string(255)
+#  token              :string(255)
+#  token_expires_at   :datetime
+#  updated_at         :datetime
+#  user_id            :integer
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  token: MyString
+  secret: MyString
+  realm_id: MyString
+  token_expires_at: 2014-11-29 20:33:42
+  reconnect_token_at: 2014-11-29 20:33:42
+
+two:
+  user_id: 1
+  token: MyString
+  secret: MyString
+  realm_id: MyString
+  token_expires_at: 2014-11-29 20:33:42
+  reconnect_token_at: 2014-11-29 20:33:42
