@@ -10,6 +10,6 @@ class PrediqApiController < ApplicationController
 
   def dashboard
     @dashboard_tab = true
-    @forecast = MultiDayForecast.new(current_user).retrieve
+    #@forecast = MultiDayForecast.new(current_user).retrieve
   end
 end

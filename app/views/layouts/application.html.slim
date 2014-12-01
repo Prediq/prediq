@@ -6,6 +6,8 @@ html
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/dropdown.js"
     = csrf_meta_tags
+
+
   body
     .navbar.navbar-default.navbar-fixed-top
       .container
@@ -32,6 +34,22 @@ html
                   li
                     =link_to "Sign Out", destroy_user_session_path, method: :delete
 
-    / .notice
+    .notice
+      =notice
     / .alert
-    = yield
+
+
+    =yield
+    -unless session[:token]
+      .intuit-button-container
+        ipp:connectToIntuit
+
+    =javascript_include_tag "https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"
+
+    javascript:
+      intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: "#{Rails.application.secrets.host}/authenticate_quickbooks"});
+    css:
+      .intuit-button-container {
+        width: 110px;
+        margin: 0 auto;
+      }

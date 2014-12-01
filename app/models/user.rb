@@ -53,6 +53,8 @@ class User < ActiveRecord::Base
   validates :status,            inclusion: [true, false] # huh?
   validates :telephone,         presence: true # TODO: format
   validates :token,             presence: true # REVIEW
+  
+  has_one :quickbooks_auth
 
   after_initialize :set_defaults, if: :new_record?
 
@@ -65,6 +67,10 @@ class User < ActiveRecord::Base
   
   def full_name
     "#{firstname} #{lastname}"
+  end
+  
+  def has_authorized_quickbooks?
+    quickbooks_auth.try(:token).present?
   end
 
   protected
