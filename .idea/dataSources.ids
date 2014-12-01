@@ -392,6 +392,34 @@
     </database-info>
     <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
     <schema name="" catalog="prediq_api_staging"/>
+    <table name="admins" schema="" catalog="prediq_api_staging" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="Jyc="/>
+      <column name="encrypted_password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="Jyc="/>
+      <column name="reset_password_token" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="reset_password_sent_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="remember_created_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="sign_in_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="current_sign_in_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="last_sign_in_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="current_sign_in_ip" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="last_sign_in_ip" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="authentication_token" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="first_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="last_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="created_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="updated_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <index name="index_admins_on_authentication_token" unique="true" columns="authentication_token"/>
+      <index name="index_admins_on_email" unique="true" columns="email"/>
+      <index name="index_admins_on_reset_password_token" unique="true" columns="reset_password_token"/>
+      <index name="index_admins_on_last_name" unique="false" columns="last_name"/>
+    </table>
+    <table name="admins_roles" schema="" catalog="prediq_api_staging" type="TABLE">
+      <column name="admin_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="role_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <index name="index_admins_roles_on_admin_id_and_role_id" unique="false" columns="admin_id,role_id"/>
+    </table>
     <table name="api_address" schema="" catalog="prediq_api_staging" type="TABLE">
       <column name="address_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
@@ -524,7 +552,7 @@
       <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
       <column name="telephone" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <column name="fax" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
-      <column name="password" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="encrypted_password" sqlType="VARCHAR" precision="70" scale="0" nullable="false" jdbcType="12" def="Jyc="/>
       <column name="salt" sqlType="VARCHAR" precision="9" scale="0" nullable="false" jdbcType="12"/>
       <column name="api_key" sqlType="CHAR" precision="32" scale="0" nullable="true" jdbcType="1"/>
       <column name="newsletter" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
@@ -535,9 +563,21 @@
       <column name="approved" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <column name="token" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
+      <column name="reset_password_token" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="reset_password_sent_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="remember_created_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="sign_in_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="current_sign_in_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="last_sign_in_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="current_sign_in_ip" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="last_sign_in_ip" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="created_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="updated_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="customer_id"/>
       <exported-key name="fk_add_cust" table="api_address" schema="" catalog="prediq_api_staging" columns="customer_id"/>
       <index name="api_key" unique="true" columns="api_key"/>
+      <index name="index_api_customer_on_email" unique="true" columns="email"/>
+      <index name="index_api_customer_on_reset_password_token" unique="true" columns="reset_password_token"/>
     </table>
     <table name="api_customer_ban_ip" schema="" catalog="prediq_api_staging" type="TABLE">
       <column name="customer_ban_ip_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -712,6 +752,21 @@
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
       <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
       <primary-key name="PRIMARY" columns="zone_to_geo_zone_id"/>
+    </table>
+    <table name="roles" schema="" catalog="prediq_api_staging" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="resource_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="resource_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="created_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="updated_at" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <index name="index_roles_on_name" unique="false" columns="name"/>
+      <index name="index_roles_on_name_and_resource_type_and_resource_id" unique="false" columns="name,resource_type,resource_id"/>
+    </table>
+    <table name="schema_migrations" schema="" catalog="prediq_api_staging" type="TABLE">
+      <column name="version" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <index name="unique_schema_migrations" unique="true" columns="version"/>
     </table>
   </data-source>
 </component>
