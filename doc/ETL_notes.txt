@@ -1,0 +1,30 @@
+Lots going on here, lets start with the bare minimum we need for forecasting.
+
+1.) At the initial signup we need 1 year of sales summary history by day in the database to show an immediate forecast.
+I can certainly add an API POST call for this.  I will try to get that done by tomorrow evening for you.
+
+2.) Ongoing we need the ETL to run nightly and grab the sales data from the day before along with any deltas from the
+past, transform it and dump it into the F_SALES Table in the Prediq_RDev Schema.
+
+     Nightly data pulls form quickbooks:
+
+1.) We will ultimately need to capture the sales data 2 ways, Actuals and Invoices.  The data science layer is not set
+up to process that at this point however, we need to keep in mind that we are planning this for the future in your data pulls.
+
+2.) My suggestion is to pull down all sales, billing, invoice and expense data in as much detail as we can to store in
+the staging database.  The reason is we need the data to analyze to determine potential low hanging fruit for alerting.
+Also, down the road, we can use the data for modeling the industry trends.
+
+
+Sales Data needs to be captured in the following format:
+
+  `PRIMKEY` int(11) NOT NULL AUTO_INCREMENT,
+  `CUSTOMER_ID` int(11) DEFAULT NULL,
+  `address_id` int(11) NOT NULL,
+  `SALES` float DEFAULT NULL,
+  `TRANSACTION_DATE` date DEFAULT NULL,
+  `INSERT_DATE` date DEFAULT NULL,
+  PRIMARY KEY (`PRIMKEY`),
+  KEY `F_SALES_CUST` (`CUSTOMER_ID`),
+  KEY `F_SALES_DATE` (`TRANSACTION_DATE`),
+  KEY `address_id` (`address_id`)
