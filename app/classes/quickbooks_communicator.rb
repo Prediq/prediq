@@ -19,14 +19,19 @@ class QuickbooksCommunicator
     # customers.max_results = 20 # the maximum number of results in this query set
   end
 
-  def invoices
-    service = Quickbooks::Service::Customer.new
-    util = Quickbooks::Util::QueryBuilder.new
+  def sales_receipts
+    service = Quickbooks::Service::SalesReceipt.new
+    service.company_id = quickbooks_auth.realm_id
+    service.access_token = quickbooks_auth.access_token
 
-    # the method signature is: clause(field, operator, value)
-    clause1 = util.clause("DisplayName", "LIKE", "%O'Halloran")
-    clause2 = util.clause("CompanyName", "=", "Smith")
+    service.query
+  end
 
-    service.query("SELECT * FROM Invoice")
+  def company_info
+    service = Quickbooks::Service::CompanyInfo.new
+    service.company_id = quickbooks_auth.realm_id
+    service.access_token = quickbooks_auth.access_token
+
+    service.query
   end
 end
