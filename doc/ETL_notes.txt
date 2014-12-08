@@ -28,3 +28,13 @@ Sales Data needs to be captured in the following format:
   KEY `F_SALES_CUST` (`CUSTOMER_ID`),
   KEY `F_SALES_DATE` (`TRANSACTION_DATE`),
   KEY `address_id` (`address_id`)
+
+
+************************************************************************************************************************
+http://stackoverflow.com/questions/20925630/exporting-data-from-quickbooks-with-ruby
+
+If you're communicating with QuickBooks Online, (which you CAN do - the QuickBooks Online API is not limited to
+distributable apps) all you have to do is send OAuth signed requests to Intuit's servers. This is likely WAY easier
+than communicating with QuickBooks for Windows - especially if you're already familiar with OAuth. Looks like there's
+some pretty easy to use Ruby gems for OAuth out there you can use: http://oauth.rubyforge.org/
+
