@@ -154,8 +154,8 @@ namespace :deploy do
   namespace :database_yml do
     desc "SCP transfer the config/database.yml to the shared config folder"
     task :setup, roles: :app do
-      #transfer :up, "config/database.yml", "#{shared_path}/config/database.yml", :via => :scp
-      db.setup
+      transfer :up, "config/database.yml", "#{shared_path}/config/database.yml", :via => :scp
+      # db.setup # comes from capistrano_database.rb
     end
 
     desc "Symlink database.yml to the release path"

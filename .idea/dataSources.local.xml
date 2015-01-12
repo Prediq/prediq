@@ -3,18 +3,11 @@
   <component name="dataSourceStorageLocal">
     <data-source name="Rails prediq: development" uuid="f024cf78-9531-4320-832d-ff9dbb9d7067">
       <user-name>root</user-name>
-      <schema-pattern>prediq_api_development.*</schema-pattern>
-      <default-schemas>prediq_api_development.*</default-schemas>
     </data-source>
-    <data-source name="Rails prediq: test" uuid="7aa99e41-8778-4493-85c6-73f6b6ad10c7">
-      <first-sync>true</first-sync>
-      <user-name>root</user-name>
-    </data-source>
+    <data-source name="Rails prediq: test" uuid="7aa99e41-8778-4493-85c6-73f6b6ad10c7" />
     <data-source name="Rails prediq: staging" uuid="a863ce3a-3f1f-4ed7-83c0-a35786cd30bf">
       <user-name>prediq_RbyApiU</user-name>
       <user-password>dffedfc5dff4dfffdfefdfe1dfd7dff7dfeddff7dfccdff9</user-password>
-      <schema-pattern>prediq_api_staging.*</schema-pattern>
-      <default-schemas>prediq_api_staging.*</default-schemas>
     </data-source>
   </component>
 </project>

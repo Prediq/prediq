@@ -21,6 +21,53 @@ development:
   <<: *default
   database: prediq_api_development
 
+import_development:
+  <<: *default
+  database: prediq_api_import_development
+
+# NOTE: accessing different DB's via the database.yml and models inspired by:
+# http://stackoverflow.com/questions/17311199/connecting-to-multiple-databases-in-ruby-on-rails
+
+# $ RAILS_ENV=import_development bundle exec rake db:create
+# NOTE: the situations wth the "import_*" environment is unusual in that we only need it to do migrations
+# to the "prediq_api_import_development" or "prediq_api_import_staging" database, used for the quickbooks inport jobs.
+# The migration files have this at the top:
+
+#  def connection
+#    ActiveRecord::Base.establish_connection("import_#{Rails.env}").connection
+#  end
+
+# So that the tables are built in the "prediq_api_import_development" DB.
+
+# Now that the tables are in the correct DB we need their corresponding models to access the correct DB, so the
+# models have this at the top:
+
+# establish_connection "import_#{Rails.env}"
+
+# this reads the appropriate part of the database.yml and then makes the connection to the DB named within
+# Since that is all handled, all we need to do to create the database initially is to issue the following:
+
+#   $ RAILS_ENV=import_staging bundle exec rake db:create
+
+# Local machine:
+# $ RAILS_ENV=import_development bundle exec rake db:create
+
+# All migrations are handled simply with a 'rake db:migrate' as usual, so the deploys will work without any modifications.
+
+staging:
+  <<: *default
+  host:     mysql1-prediq.brownrice.com
+  database: prediq_api_staging
+  username: prediq_RbyApiU
+  password: To^UEK}]G]fS
+
+import_staging:
+  <<: *default
+  host:     mysql1-prediq.brownrice.com
+  database: prediq_api_import_staging
+  username: prediq_RbyApiU
+  password: To^UEK}]G]fS
+
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
@@ -47,10 +94,8 @@ development:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-staging:
-  <<: *default
-  host:     mysql1-prediq.brownrice.com
-  database: prediq_api_staging
-  username: prediq_RbyApiU
-#  password: <%= ENV['PREDIQ_DATABASE_PASSWORD'] %>   prediq_RbyApiU
-  password: To^UEK}]G]fS
+
+# Williams-MacBook-Pro ~/prediq/prediq_api: mysql -u root -d prediq_api_development
+# create database prediq_api_import_development CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+# alter table old_db.fooTable rename new_db.fooTable

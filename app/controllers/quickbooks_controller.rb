@@ -20,6 +20,7 @@ class QuickbooksController < ApplicationController
       realm_id: realm_id
     )
     # store the token, secret & RealmID somewhere for this user, you will need all 3 to work with Quickbooks-Ruby
+    # NOTE: redirect ONLY if success of QuickbooksAuth.create! AND quickbooks_auth.update!(
     redirect_to '/quickbooks_success'
   end
   

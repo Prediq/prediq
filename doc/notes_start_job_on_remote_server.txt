@@ -1,0 +1,6 @@
+http://askubuntu.com/questions/16050/remotely-run-a-command-on-a-ssh-server-with-a-script?rq=1
+
+http://askubuntu.com/questions/349262/run-a-nohup-command-over-ssh-then-disconnect
+
+http://askubuntu.com/questions/204065/how-to-run-local-shell-script-on-remote-server-via-ssh?rq=1
+

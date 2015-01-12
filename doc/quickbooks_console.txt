@@ -1,0 +1,71 @@
+To get quickbooks data at the console:
+
+1.  IN a browser log in as user 2 "tc2@bigmagma.com" authenticate QB to create the user and create the QuickbookAuth record for that user so we can next hit QB for the data
+  a. dashboard page, click Connect to QB as you can use wes@prediq.com pr3d1q)
+
+2. In console
+  a. user = User.find 2
+  a. sales_receipts = QuickbooksCommunicator.new(user.quickbooks_auth).sales_receipts
+
+  c. the array = sales_receipts.entries
+
+[6] pry(main)> sales_receipts.first.attributes
+=> {"global_tax_calculation"=>nil,
+ "id"=>47,
+ "sync_token"=>0,
+ "meta_data"=>{"create_time"=>2014-11-01 13:40:52 -0500, "last_updated_time"=>2014-11-01 13:40:52 -0500},
+ "auto_doc_number"=>nil,
+ "doc_number"=>"1014",
+ "txn_date"=>2014-10-30 00:00:00 -0500,
+ "line_items"=>
+  [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Weekly Gardening Service, amount: 140.0, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Gardening", "value"=>"6", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb073595fa8,'0.35E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb073587e58,'0.4E1',9(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>,
+   #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 140.0, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>],
+ "customer_ref"=>{"name"=>"Diego Rodriguez", "value"=>"4", "type"=>nil},
+ "bill_email"=>{"address"=>"Diego@Rodriguez.com"},
+ "bill_address"=>
+  {"id"=>66,
+   "line1"=>"Diego Rodriguez\n321 Channing\nPalo Alto, CA  94303",
+   "line2"=>nil,
+   "line3"=>nil,
+   "line4"=>nil,
+   "line5"=>nil,
+   "city"=>nil,
+   "country"=>nil,
+   "country_sub_division_code"=>nil,
+   "postal_code"=>nil,
+   "note"=>nil,
+   "lat"=>"37.4530553",
+   "lon"=>"-122.1178261"},
+ "ship_address"=>nil,
+ "po_number"=>nil,
+ "ship_method_ref"=>nil,
+ "ship_date"=>nil,
+ "tracking_num"=>nil,
+ "payment_method_ref"=>nil,
+ "payment_ref_number"=>nil,
+ "deposit_to_account_ref"=>{"name"=>"Undeposited Funds", "value"=>"4", "type"=>nil},
+ "customer_memo"=>"Thank you for your business and have a great day!",
+ "private_note"=>nil,
+ "total"=>#<BigDecimal:7fb0734ed7e0,'0.14E3',9(18)>}
+
+[7] pry(main)> sales_receipts.first.line_items
+=> [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Weekly Gardening Service, amount: 140.0, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Gardening", "value"=>"6", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb073595fa8,'0.35E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb073587e58,'0.4E1',9(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>,
+ #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 140.0, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>]
+
+************************************************************************************************************************
+
+[1] pry(main)> user = User.find 2
+  User Load (0.2ms)  SELECT  `api_customer`.* FROM `api_customer`  WHERE `api_customer`.`customer_id` = 2 LIMIT 1
+=> #<User customer_id: 2, store_id: 0, firstname: "Indianapolis", lastname: "FastFood", email: "tc2@bigmagma.com", telephone: "12345677889", fax: "", encrypted_password: "$2a$10$yLQNfa3k1nQF87zB7yM.Qu4NtEGZ6BfryE6aoNK3KxW...", salt: "f990b9a43", api_key: "bbc042e2011fbf9b9fc10a96d2f9b8x2", newsletter: true, address_id: 2, customer_group_id: 1, ip: "70.116.134.54", status: true, approved: true, token: "w4t34543twdvsREQTE634Q61BDASVVZwareyqtyqrety5454", date_added: "2014-03-11 15:48:28", reset_password_token: nil, reset_password_sent_at: nil, remember_created_at: nil, sign_in_count: 1, current_sign_in_at: "2014-12-08 17:18:22", last_sign_in_at: "2014-12-08 17:18:22", current_sign_in_ip: "127.0.0.1", last_sign_in_ip: "127.0.0.1", created_at: nil, updated_at: "2014-12-08 17:18:22">
+[2] pry(main)> sales_receipts = QuickbooksCommunicator.new(user.quickbooks_auth).sales_receipts
+  QuickbooksAuth Load (0.3ms)  SELECT  `quickbooks_auths`.* FROM `quickbooks_auths`  WHERE `quickbooks_auths`.`user_id` = 2 LIMIT 1
+=> #<Quickbooks::Collection:0x007fb0729ed0c0
+ @count=4,
+ @entries=
+  [#<Quickbooks::Model::SalesReceipt global_tax_calculation: nil, id: 47, sync_token: 0, meta_data: {"create_time"=>2014-11-01 13:40:52 -0500, "last_updated_time"=>2014-11-01 13:40:52 -0500}, auto_doc_number: nil, doc_number: 1014, txn_date: 2014-10-30 00:00:00 -0500, line_items: [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Weekly Gardening Service, amount: 140.0, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Gardening", "value"=>"6", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb073595fa8,'0.35E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb073587e58,'0.4E1',9(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>, #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 140.0, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>], customer_ref: {"name"=>"Diego Rodriguez", "value"=>"4", "type"=>nil}, bill_email: {"address"=>"Diego@Rodriguez.com"}, bill_address: {"id"=>66, "line1"=>"Diego Rodriguez\n321 Channing\nPalo Alto, CA  94303", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>nil, "country"=>nil, "country_sub_division_code"=>nil, "postal_code"=>nil, "note"=>nil, "lat"=>"37.4530553", "lon"=>"-122.1178261"}, ship_address: nil, po_number: nil, ship_method_ref: nil, ship_date: nil, tracking_num: nil, payment_method_ref: nil, payment_ref_number: nil, deposit_to_account_ref: {"name"=>"Undeposited Funds", "value"=>"4", "type"=>nil}, customer_memo: Thank you for your business and have a great day!, private_note: nil, total: 140.0>,
+   #<Quickbooks::Model::SalesReceipt global_tax_calculation: nil, id: 38, sync_token: 0, meta_data: {"create_time"=>2014-11-01 13:15:46 -0500, "last_updated_time"=>2014-11-01 13:15:46 -0500}, auto_doc_number: nil, doc_number: 1011, txn_date: 2014-11-01 00:00:00 -0500, line_items: [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Pest Control Services, amount: 87.5, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Pest Control", "value"=>"10", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb071a9a938,'0.35E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb070b485c0,'0.25E1',18(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>, #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 87.5, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>, #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 8.75, detail_type: DiscountLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: {"discount_ref"=>nil, "percent_based?"=>true, "discount_percent"=>#<BigDecimal:7fb072977050,'0.1E2',9(18)>, "discount_account_ref"=>{"name"=>"Discounts given", "value"=>"86", "type"=>nil}}, journal_entry_line_detail: nil>], customer_ref: {"name"=>"Pye's Cakes", "value"=>"15", "type"=>nil}, bill_email: {"address"=>"karen@pye.com"}, bill_address: {"id"=>57, "line1"=>"Karen Pye\nPye's Cakes\n350 Mountain View Dr.\nSouth Orange, NJ  07079", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>nil, "country"=>nil, "country_sub_division_code"=>nil, "postal_code"=>nil, "note"=>nil, "lat"=>"40.7489277", "lon"=>"-74.2609903"}, ship_address: {"id"=>15, "line1"=>"350 Mountain View Dr.", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>"South Orange", "country"=>nil, "country_sub_division_code"=>"NJ", "postal_code"=>"07079", "note"=>nil, "lat"=>"40.7633073", "lon"=>"-74.2426072"}, po_number: nil, ship_method_ref: nil, ship_date: nil, tracking_num: nil, payment_method_ref: {"name"=>"Cash", "value"=>"1", "type"=>nil}, payment_ref_number: nil, deposit_to_account_ref: {"name"=>"Undeposited Funds", "value"=>"4", "type"=>nil}, customer_memo: Thank you for your business and have a great day!, private_note: nil, total: 78.75>,
+   #<Quickbooks::Model::SalesReceipt global_tax_calculation: nil, id: 17, sync_token: 0, meta_data: {"create_time"=>2014-10-31 17:12:39 -0500, "last_updated_time"=>2014-10-31 17:12:39 -0500}, auto_doc_number: nil, doc_number: 1008, txn_date: 2014-10-09 00:00:00 -0500, line_items: [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Custom Design, amount: 225.0, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Design", "value"=>"4", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb0728e6208,'0.75E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb0709604b0,'0.3E1',9(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>, #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 225.0, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>], customer_ref: {"name"=>"Kate Whelan", "value"=>"14", "type"=>nil}, bill_email: {"address"=>"Kate@Whelan.com"}, bill_address: {"id"=>54, "line1"=>"Kate Whelan\n45 First St.\nMenlo Park, CA  94304 USA", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>nil, "country"=>nil, "country_sub_division_code"=>nil, "postal_code"=>nil, "note"=>nil, "lat"=>"37.3813444", "lon"=>"-122.1802812"}, ship_address: {"id"=>14, "line1"=>"45 First St.", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>"Menlo Park", "country"=>"USA", "country_sub_division_code"=>"CA", "postal_code"=>"94304", "note"=>nil, "lat"=>"37.4585825", "lon"=>"-122.1352789"}, po_number: nil, ship_method_ref: nil, ship_date: nil, tracking_num: nil, payment_method_ref: nil, payment_ref_number: nil, deposit_to_account_ref: {"name"=>"Checking", "value"=>"35", "type"=>nil}, customer_memo: Thank you for your business and have a great day!, private_note: nil, total: 225.0>,
+   #<Quickbooks::Model::SalesReceipt global_tax_calculation: nil, id: 11, sync_token: 0, meta_data: {"create_time"=>2014-10-31 16:59:48 -0500, "last_updated_time"=>2014-10-31 16:59:48 -0500}, auto_doc_number: nil, doc_number: 1003, txn_date: 2014-10-29 00:00:00 -0500, line_items: [#<Quickbooks::Model::Line id: 1, line_num: 1, description: Custom Design, amount: 337.5, detail_type: SalesItemLineDetail, linked_transactions: [], sales_item_line_detail: {"item_ref"=>{"name"=>"Design", "value"=>"4", "type"=>nil}, "class_ref"=>nil, "unit_price"=>#<BigDecimal:7fb071ea5cf8,'0.75E2',9(18)>, "rate_percent"=>nil, "price_level_ref"=>nil, "quantity"=>#<BigDecimal:7fb071eaf398,'0.45E1',18(18)>, "tax_code_ref"=>{"name"=>nil, "value"=>"NON", "type"=>nil}, "service_date"=>nil}, sub_total_line_detail: nil, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>, #<Quickbooks::Model::Line id: nil, line_num: nil, description: nil, amount: 337.5, detail_type: SubTotalLineDetail, linked_transactions: [], sales_item_line_detail: nil, sub_total_line_detail: {"item_ref"=>nil, "class_ref"=>nil, "unit_price"=>nil, "quantity"=>nil, "tax_code_ref"=>nil}, payment_line_detail: nil, discount_line_detail: nil, journal_entry_line_detail: nil>], customer_ref: {"name"=>"Dylan Sollfrank", "value"=>"6", "type"=>nil}, bill_email: nil, bill_address: {"id"=>49, "line1"=>"Dylan Sollfrank", "line2"=>nil, "line3"=>nil, "line4"=>nil, "line5"=>nil, "city"=>nil, "country"=>nil, "country_sub_division_code"=>nil, "postal_code"=>nil, "note"=>nil, "lat"=>"INVALID", "lon"=>"INVALID"}, ship_address: nil, po_number: nil, ship_method_ref: nil, ship_date: nil, tracking_num: nil, payment_method_ref: {"name"=>"Check", "value"=>"2", "type"=>nil}, payment_ref_number: 10264, deposit_to_account_ref: {"name"=>"Checking", "value"=>"35", "type"=>nil}, customer_memo: Thank you for your business and have a great day!, private_note: nil, total: 337.5>],
+ @max_results=4,
+ @start_position=1>
+

@@ -3,11 +3,13 @@
     <words>
       <w>closestweatherstation</w>
       <w>currenttemp</w>
+      <w>dbconn</w>
       <w>firstname</w>
       <w>glyphicon</w>
       <w>jumbotron</w>
       <w>lastname</w>
       <w>prediq</w>
+      <w>quickbooks</w>
       <w>startdate</w>
       <w>weatherdata</w>
       <w>weatherforecast</w>

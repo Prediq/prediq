@@ -23,12 +23,12 @@ class QuickbooksCommunicator
 
   # Need to have authed user's quickbooks through the browser (for quickbooks auth credentials you can use wes@prediq.com pr3d1q)
   # QuickbooksCommunicator.new(User.last.quickbooks_auth).sales_receipts
-  def sales_receipts
+  def sales_receipts(query_str = nil)
     service = Quickbooks::Service::SalesReceipt.new
     service.company_id = quickbooks_auth.realm_id
     service.access_token = quickbooks_auth.access_token
 
-    service.query
+    service.query(query_str)
   end
 
   # Need to have authed user's quickbooks through the browser (for quickbooks auth credentials you can use wes@prediq.com pr3d1q)
@@ -40,4 +40,27 @@ class QuickbooksCommunicator
 
     service.query
   end
+
+ # Need to have authed user's quickbooks through the browser (for quickbooks auth credentials you can use wes@prediq.com pr3d1q)
+  # QuickbooksCommunicator.new(User.last.quickbooks_auth).company_info
+  def invoices(query_str = nil)
+    service = Quickbooks::Service::Invoice.new
+    service.company_id = quickbooks_auth.realm_id
+    service.access_token = quickbooks_auth.access_token
+
+    service.query
+  end
+
 end
+
+
+=begin
+Update User 2 on staging to  have password 'pleaseme':
+user = User.find 2
+user.password = 'pleaseme'
+user.password_confirmation = 'pleaseme'
+user.token = 'w4t34543twdvsREQTE634Q61BDASVVZwareyqtyqrety5454'
+user.save!
+
+
+=end

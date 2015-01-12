@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141130023342) do
+ActiveRecord::Schema.define(version: 20141223150001) do
 
   create_table "admins", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -61,9 +61,11 @@ ActiveRecord::Schema.define(version: 20141130023342) do
     t.float   "distance_to_weather_station", limit: 24,              null: false
     t.float   "lat",                         limit: 53,              null: false
     t.float   "lon",                         limit: 53,              null: false
+    t.boolean "primary_address",                                     null: false
   end
 
   add_index "api_address", ["customer_id"], name: "customer_id", using: :btree
+  add_index "api_address", ["primary_address"], name: "primary_address", using: :btree
 
   create_table "api_address_annotation", primary_key: "api_address_annotation_id", force: true do |t|
     t.integer  "address_id",                                null: false
@@ -169,7 +171,6 @@ ActiveRecord::Schema.define(version: 20141130023342) do
     t.string   "salt",                   limit: 9,                  null: false
     t.string   "api_key",                limit: 32
     t.boolean  "newsletter",                        default: false, null: false
-    t.integer  "address_id",                        default: 0,     null: false
     t.integer  "customer_group_id",                                 null: false
     t.string   "ip",                     limit: 40, default: "0",   null: false
     t.boolean  "status",                                            null: false
