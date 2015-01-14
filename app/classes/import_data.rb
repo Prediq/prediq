@@ -66,37 +66,6 @@ class ImportData
 
   end
 
-  def import_company_info_data(user)
-    company_info = QuickbooksCommunicator.new(user.quickbooks_auth_import).company_info.first
-    # puts "*********"
-    # puts "company_info.attributes: #{company_info.attributes}"
-    # NOTE: The => {"id"=>1, at the very start of the result is called the 'qb_company_info_id'
-    qb_company_info_id = company_info['id']
-    # puts "company_info['id']: #{qb_company_info_id}"
-    # puts "**********************************"
-
-    # Works: user_data = $dbconn.exec_query("SELECT * FROM prediq_api_#{$rails_env}.api_customer where customer_id = #{user.id} LIMIT 1").first
-    # puts "********* user_data.class: #{user_data.class}"
-    # puts "********* user_data: #{user_data['email']}"
-    # puts "********* user_data.keys: #{user_data.keys}"
-
-    # 1.  Delete the recs, if any, for the CustomerInfo data for that user
-    $dbconn.execute("DELETE FROM prediq_api_import_#{$rails_env}.company_info_imports where qb_company_info_id = #{qb_company_info_id}")
-    # 2. Use the company_info result and create a company_info_import
-
-    # puts;puts "*** Creating CustomerInfoImport";puts
-    # puts "******************************************************************************************"
-    # puts customer_info_attribs(company_info, user.id)
-    # puts "******************************************************************************************"
-
-    CompanyInfoImport.create!(company_info_attribs(company_info, user.id))
-
-    # TODO: 1. Create the AddressInfoImport table address_info_imports
-    # TODO: 2. Iterate over the company_info['company_address'] => object and create AddressInfoImport records
-    # connection = ActiveRecord::Base.connection
-    # connection.execute("SQL query")
-  end
-
   def import_sales_data(user, query_str)
 
     # user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
@@ -301,6 +270,22 @@ PROCESS FLOW:
     else
       department_ref_name, department_ref_value, department_ref_type = nil, nil, nil
     end
+    if sales_receipt['ship_method_ref']
+      ship_method_ref        = sales_receipt['ship_method_ref']
+      ship_method_ref_name   = (ship_method_ref['name'])  ? ship_method_ref['name']  : nil
+      ship_method_ref_value  = (ship_method_ref['value']) ? ship_method_ref['value'] : nil
+      ship_method_ref_type   = (ship_method_ref['type'])  ? ship_method_ref['type']  : nil
+    else
+      ship_method_ref_name, ship_method_ref_value, ship_method_ref_type = nil, nil, nil
+    end
+    if sales_receipt['payment_method_method_ref']
+      payment_method_ref        = sales_receipt['payment_method_ref']
+      payment_method_ref_name   = (payment_method_ref['name'])  ? payment_method_ref['name']  : nil
+      payment_method_ref_value  = (payment_method_ref['value']) ? payment_method_ref['value'] : nil
+      payment_method_ref_type   = (payment_method_ref['type'])  ? payment_method_ref['type']  : nil
+    else
+      payment_method_ref_name, payment_method_ref_value, payment_method_ref_type = nil, nil, nil
+    end
 
     if sales_receipt['txn_tax_detail']
       txn_tax_detail    = sales_receipt['txn_tax_detail']
@@ -337,6 +322,8 @@ PROCESS FLOW:
       customer_ref_name:            sales_receipt['customer_ref']['name'],
       customer_ref_value:           sales_receipt['customer_ref']['value'],
       customer_ref_type:            sales_receipt['customer_ref']['type'],
+      bill_email_address:           (sales_receipt['bill_email']) ? sales_receipt['bill_email']['address'] : nil,
+      # bill email (end user customer's email address)
       department_ref_name:          department_ref_name ,
       department_ref_value:         department_ref_value,
       department_ref_type:          department_ref_type ,
@@ -375,17 +362,30 @@ PROCESS FLOW:
       ship_address_lat:             ship_address_lat,
       ship_address_lon:             ship_address_lon,
       # duplicate the above for ship_address info
+      ship_method_ref_name:         ship_method_ref_name,
+      ship_method_ref_value:        ship_method_ref_value,
+      ship_method_ref_type:         ship_method_ref_type,
       # shipping method
+      ship_date:                    (sales_receipt['ship_date']) ? sales_receipt['ship_date']['date'] : nil,
       # ship date
-      sales_receipt_total:          sales_receipt['total']
-      # bill email (end user customer's email address)
+      sales_receipt_total:          sales_receipt['total'],
+      balance:                      (sales_receipt['balance']) ? sales_receipt['balance'] : nil,
       # balance
+      payment_method_ref_name:      payment_method_ref_name,
+      payment_method_ref_value:     payment_method_ref_value,
+      payment_method_ref_type:      payment_method_ref_type,
       # payment ref method name, type, value
+      payment_type:                 (sales_receipt['payment_type']) ? sales_receipt['payment_type'] : nil,
       # payment type
+      apply_after_tax_discount:     (sales_receipt['apply_after_tax_discount']) ? sales_receipt['apply_after_tax_discount'] : nil,
       # apply_after_tax_discount
-      # currency_reference
-      # exchange rate
-      # global tax calc
+      currency_ref:                 (sales_receipt['currency_ref']) ? sales_receipt['currency_ref'] : nil,
+      # currency_ref ??? the docs are unclear: https://developer.intuit.com/docs/api/accounting - NEED to see real data coming in
+      exchange_rate:                (sales_receipt['currency_ref']) ? sales_receipt['currency_ref'] : nil,
+      # exchange_rate
+      global_tax_calculation:       (sales_receipt['global_tax_calculation']) ? sales_receipt['global_tax_calculation'] : nil,
+      # global_tax_calculation
+      home_total_amount:            (sales_receipt['home_total_amount']) ? sales_receipt['home_total_amount'] : nil
       # home_total_amount
     }
   end
@@ -413,7 +413,7 @@ PROCESS FLOW:
           ship_address_lon:             ship_address['lon'],
         }
       else
-        {}
+        ship_address_id, ship_address_line_1, ship_address_line_2, ship_address_line_3, ship_address_line_4, ship_address_line_5, ship_address_city, ship_address_country_sub_division_code, ship_address_postal_code, ship_address_lat, ship_address_lon = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
       end
 
     {
@@ -490,19 +490,23 @@ if func == "get_first_yr"
 
 =begin
 
-NOTE: Commented out for testing only, uncomment for live / prod
-
+  NOTE:  Since we are now doing this in PHP there is no need to import the company_info as the prediq_api_<rails_env>.api_customer
+  record AND the prediq_api_<rails_env>.quickbook_auths records have already been created, so we do not need this part
   # 2. write the CompanyInfo data to the CompanyInfoImport relation
   id.import_company_info_data(user)
+=end
 
-  # 3. Import SalesReceipt data
+  # 2. Import SalesReceipt data
   # Initial First Year import for the Sales Forecast
   # Calc the present date backwards one year for the query first year's sales receipt data
   query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
   qb_entity = 'SalesReceipt'
   query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
   puts "********* query_str: #{query_str}"
+
   id.import_sales_data(user, query_str)
+
+=begin
 
   # 4. Check if they have any Invoices
   query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
@@ -510,13 +514,15 @@ NOTE: Commented out for testing only, uncomment for live / prod
   query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
 
   id.import_invoices_data(user, query_str)
-=end
 
   # 5. Split out the company info and the address info from the prediq_api_import_#{rails_env}.company_info_imports table
   #    and copy to the prediq_api_#{rails_env}.api_customer and the prediq_api_#{rails_env}.api_address tables, if the 
   #    corresponding data is not already there.
   # NOTE: When copying SalesReceipt data, look for some 'address_id' to attempt to correlate sales receipts with an address_id
+
   id.copy_from_import_to_live(user, rails_env)
+
+=end
 
   # Now create the Data Warehouse records, starting with the Customer dimension, then the F_Sales data
   # Note that I manually created a new api_customer user "Bill Kiskin" to mimic the new user signing up, as opposed to using an existing user.
@@ -893,5 +899,40 @@ t.string      :bill_email_address
 => nil
 [33] pry(main)> cust_fields['number_value']
 => nil
+
+
+OBSOLETE CODE:
+
+  def import_company_info_data(user)
+    company_info = QuickbooksCommunicator.new(user.quickbooks_auth_import).company_info.first
+    # puts "*********"
+    # puts "company_info.attributes: #{company_info.attributes}"
+    # NOTE: The => {"id"=>1, at the very start of the result is called the 'qb_company_info_id'
+    qb_company_info_id = company_info['id']
+    # puts "company_info['id']: #{qb_company_info_id}"
+    # puts "**********************************"
+
+    # Works: user_data = $dbconn.exec_query("SELECT * FROM prediq_api_#{$rails_env}.api_customer where customer_id = #{user.id} LIMIT 1").first
+    # puts "********* user_data.class: #{user_data.class}"
+    # puts "********* user_data: #{user_data['email']}"
+    # puts "********* user_data.keys: #{user_data.keys}"
+
+    # 1.  Delete the recs, if any, for the CustomerInfo data for that user
+    $dbconn.execute("DELETE FROM prediq_api_import_#{$rails_env}.company_info_imports where qb_company_info_id = #{qb_company_info_id}")
+    # 2. Use the company_info result and create a company_info_import
+
+    # puts;puts "*** Creating CustomerInfoImport";puts
+    # puts "******************************************************************************************"
+    # puts customer_info_attribs(company_info, user.id)
+    # puts "******************************************************************************************"
+
+    CompanyInfoImport.create!(company_info_attribs(company_info, user.id))
+
+    # TODO: 1. Create the AddressInfoImport table address_info_imports
+    # TODO: 2. Iterate over the company_info['company_address'] => object and create AddressInfoImport records
+    # connection = ActiveRecord::Base.connection
+    # connection.execute("SQL query")
+  end
+
 
 =end

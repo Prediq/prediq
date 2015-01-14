@@ -514,4 +514,35 @@ create_table "prediq_api_import_#{Rails.env}.invoice_line_item_imports" do |t|
  t.string  :sub_total_line_detail_item_ref_name
  t.string  :sub_total_line_detail_item_ref_value
  t.string  :sub_total_line_detail_item_ref_type
+
+Create api_customer record
+
+  `customer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `qb_company_info_id` int(11) NOT NULL,
+  `store_id` int(11) NOT NULL DEFAULT '0',
+  `firstname` varchar(32) NOT NULL,
+  `lastname` varchar(32) NOT NULL,
+  `email` varchar(96) NOT NULL,
+  `telephone` varchar(32) NOT NULL,
+  `fax` varchar(32) NOT NULL,
+  `encrypted_password` varchar(70) NOT NULL DEFAULT '',
+  `salt` varchar(9) NOT NULL,
+  `api_key` char(32) DEFAULT NULL,
+  `newsletter` tinyint(1) NOT NULL DEFAULT '0',
+  `customer_group_id` int(11) NOT NULL,
+  `ip` varchar(40) NOT NULL DEFAULT '0',
+  `status` tinyint(1) NOT NULL,
+  `approved` tinyint(1) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `reset_password_token` varchar(255) DEFAULT NULL,
+  `reset_password_sent_at` datetime DEFAULT NULL,
+  `remember_created_at` datetime DEFAULT NULL,
+  `sign_in_count` int(11) NOT NULL DEFAULT '0',
+  `current_sign_in_at` datetime DEFAULT NULL,
+  `last_sign_in_at` datetime DEFAULT NULL,
+  `current_sign_in_ip` varchar(255) DEFAULT NULL,
+  `last_sign_in_ip` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
 =end

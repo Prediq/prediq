@@ -3250,6 +3250,7 @@
       <column name="address_1" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
       <column name="address_2" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
       <column name="city" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="country_sub_division_code" sqlType="VARCHAR" precision="32" scale="0" nullable="true" jdbcType="12"/>
       <column name="postcode" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
       <column name="country_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <column name="zone_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
@@ -3259,6 +3260,7 @@
       <column name="lat" sqlType="DOUBLE" precision="9" scale="6" nullable="false" jdbcType="8"/>
       <column name="lon" sqlType="DOUBLE" precision="9" scale="6" nullable="false" jdbcType="8"/>
       <column name="primary_address" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" remarks="RGV0ZXJtaW5lcyBpZiB0aGlzIGlzIHRoZSBwcmltYXJ5IGFkZHJlc3MgZm9yIHRoZSB1c2VyLg=="/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6"/>
       <primary-key name="PRIMARY" columns="address_id"/>
       <foreign-key name="fk_add_cust" columns="customer_id" ref-table="api_customer" ref-schema="" ref-catalog="prediq_api_development" ref-columns="customer_id" update-rule="0" delete-rule="0" deferrability="2"/>
       <index name="primary_address" unique="false" columns="primary_address"/>
@@ -3736,11 +3738,31 @@
       <column name="sync_token" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="transaction_date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <column name="meta_data_create_time" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="last_updated_time" sqlType="TIMESTAMP" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <column name="sales_receipt_total" sqlType="DECIMAL" precision="7" scale="2" nullable="true" jdbcType="3"/>
       <column name="bill_address_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="customer_ref_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="customer_ref_value" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="customer_ref_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="bill_email_address" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="balance" sqlType="DECIMAL" precision="10" scale="2" nullable="true" jdbcType="3"/>
+      <column name="payment_method_ref_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="payment_method_ref_value" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="payment_method_ref_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="payment_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="currency_ref" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6"/>
+      <column name="exchange_rate" sqlType="DECIMAL" precision="6" scale="2" nullable="true" jdbcType="3"/>
+      <column name="global_tax_calculation" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="home_total_amount" sqlType="DECIMAL" precision="10" scale="2" nullable="true" jdbcType="3"/>
+      <column name="apply_after_tax_discount" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6"/>
+      <column name="department_ref_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="customer_memo" sqlType="VARCHAR" precision="1024" scale="0" nullable="true" jdbcType="12"/>
+      <column name="private_note" sqlType="VARCHAR" precision="4096" scale="0" nullable="true" jdbcType="12"/>
+      <column name="linked_transaction_id" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="txn_tax_code_ref" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="total_tax" sqlType="DECIMAL" precision="10" scale="4" nullable="true" jdbcType="3"/>
+      <column name="department_ref_value" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="department_ref_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="bill_address_line_1" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="bill_address_line_2" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="bill_address_line_3" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
@@ -3751,6 +3773,21 @@
       <column name="bill_address_postal_code" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="bill_address_lat" sqlType="DECIMAL" precision="10" scale="7" nullable="true" jdbcType="3"/>
       <column name="bill_address_lon" sqlType="DECIMAL" precision="10" scale="7" nullable="true" jdbcType="3"/>
+      <column name="ship_address_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="ship_address_line_1" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_line_2" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_line_3" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_line_4" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_line_5" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_city" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_country_sub_division_code" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_postal_code" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_address_lat" sqlType="DECIMAL" precision="10" scale="7" nullable="true" jdbcType="3"/>
+      <column name="ship_address_lon" sqlType="DECIMAL" precision="10" scale="7" nullable="true" jdbcType="3"/>
+      <column name="ship_method_ref_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_method_ref_value" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="ship_method_ref_type" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ship_date" sqlType="TIMESTAMP" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="id"/>
     </table>
     <table name="sales_receipt_line_item_imports" schema="" catalog="prediq_api_import_development" type="TABLE">
@@ -5907,6 +5944,26 @@
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="affiliate_id"/>
     </table>
+    <table name="api_affiliate_activity" schema="" catalog="prediq_api" type="TABLE">
+      <column name="activity_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="affiliate_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="key" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="data" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="activity_id"/>
+    </table>
+    <table name="api_affiliate_login" schema="" catalog="prediq_api" type="TABLE">
+      <column name="affiliate_login_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="total" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="affiliate_login_id"/>
+      <index name="email" unique="false" columns="email"/>
+      <index name="ip" unique="false" columns="ip"/>
+    </table>
     <table name="api_affiliate_transaction" schema="" catalog="prediq_api" type="TABLE">
       <column name="affiliate_transaction_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="affiliate_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
@@ -5915,6 +5972,40 @@
       <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="affiliate_transaction_id"/>
+    </table>
+    <table name="api_api" schema="" catalog="prediq_api" type="TABLE">
+      <column name="api_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="username" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="firstname" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="lastname" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="api_id"/>
+    </table>
+    <table name="api_attribute" schema="" catalog="prediq_api" type="TABLE">
+      <column name="attribute_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="attribute_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="attribute_id"/>
+    </table>
+    <table name="api_attribute_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="attribute_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="attribute_id,language_id"/>
+    </table>
+    <table name="api_attribute_group" schema="" catalog="prediq_api" type="TABLE">
+      <column name="attribute_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="attribute_group_id"/>
+    </table>
+    <table name="api_attribute_group_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="attribute_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="attribute_group_id,language_id"/>
     </table>
     <table name="api_banner" schema="" catalog="prediq_api" type="TABLE">
       <column name="banner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -5927,6 +6018,7 @@
       <column name="banner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="link" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <primary-key name="PRIMARY" columns="banner_image_id"/>
     </table>
     <table name="api_banner_image_description" schema="" catalog="prediq_api" type="TABLE">
@@ -5935,6 +6027,52 @@
       <column name="banner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="title" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="banner_image_id,language_id"/>
+    </table>
+    <table name="api_category" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="parent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="top" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="column" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="category_id"/>
+      <index name="parent_id" unique="false" columns="parent_id"/>
+    </table>
+    <table name="api_category_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="meta_title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_description" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_keyword" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="category_id,language_id"/>
+      <index name="name" unique="false" columns="name"/>
+    </table>
+    <table name="api_category_filter" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="filter_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="category_id,filter_id"/>
+    </table>
+    <table name="api_category_path" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="path_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="level" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="category_id,path_id"/>
+    </table>
+    <table name="api_category_to_layout" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="layout_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="category_id,store_id"/>
+    </table>
+    <table name="api_category_to_store" schema="" catalog="prediq_api" type="TABLE">
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="category_id,store_id"/>
     </table>
     <table name="api_country" schema="" catalog="prediq_api" type="TABLE">
       <column name="country_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -5945,6 +6083,43 @@
       <column name="postcode_required" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
       <primary-key name="PRIMARY" columns="country_id"/>
+    </table>
+    <table name="api_coupon" schema="" catalog="prediq_api" type="TABLE">
+      <column name="coupon_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="code" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="type" sqlType="CHAR" precision="1" scale="0" nullable="false" jdbcType="1"/>
+      <column name="discount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="logged" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="shipping" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="total" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="date_start" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="date_end" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="uses_total" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="uses_customer" sqlType="VARCHAR" precision="11" scale="0" nullable="false" jdbcType="12"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="coupon_id"/>
+    </table>
+    <table name="api_coupon_category" schema="" catalog="prediq_api" type="TABLE">
+      <column name="coupon_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="coupon_id,category_id"/>
+    </table>
+    <table name="api_coupon_history" schema="" catalog="prediq_api" type="TABLE">
+      <column name="coupon_history_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="coupon_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="coupon_history_id"/>
+    </table>
+    <table name="api_coupon_product" schema="" catalog="prediq_api" type="TABLE">
+      <column name="coupon_product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="coupon_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="coupon_product_id"/>
     </table>
     <table name="api_currency" schema="" catalog="prediq_api" type="TABLE">
       <column name="currency_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -5957,6 +6132,40 @@
       <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
       <primary-key name="PRIMARY" columns="currency_id"/>
+    </table>
+    <table name="api_custom_field" schema="" catalog="prediq_api" type="TABLE">
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="type" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="value" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="location" sqlType="VARCHAR" precision="7" scale="0" nullable="false" jdbcType="12"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="custom_field_id"/>
+    </table>
+    <table name="api_custom_field_customer_group" schema="" catalog="prediq_api" type="TABLE">
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="required" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <primary-key name="PRIMARY" columns="custom_field_id,customer_group_id"/>
+    </table>
+    <table name="api_custom_field_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="custom_field_id,language_id"/>
+    </table>
+    <table name="api_custom_field_value" schema="" catalog="prediq_api" type="TABLE">
+      <column name="custom_field_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="custom_field_value_id"/>
+    </table>
+    <table name="api_custom_field_value_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="custom_field_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="custom_field_value_id,language_id"/>
     </table>
     <table name="api_customer" schema="" catalog="prediq_api" type="TABLE">
       <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -5977,9 +6186,22 @@
       <column name="approved" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <column name="token" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
+      <column name="cart" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="wishlist" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="custom_field" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="safe" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <primary-key name="PRIMARY" columns="customer_id"/>
       <exported-key name="fk_add_cust" table="api_address" schema="" catalog="prediq_api" columns="customer_id"/>
       <index name="api_key" unique="true" columns="api_key"/>
+    </table>
+    <table name="api_customer_activity" schema="" catalog="prediq_api" type="TABLE">
+      <column name="activity_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="key" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="data" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="activity_id"/>
     </table>
     <table name="api_customer_ban_ip" schema="" catalog="prediq_api" type="TABLE">
       <column name="customer_ban_ip_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -6021,6 +6243,17 @@
       <primary-key name="PRIMARY" columns="customer_ip_id"/>
       <index name="ip" unique="false" columns="ip"/>
     </table>
+    <table name="api_customer_login" schema="" catalog="prediq_api" type="TABLE">
+      <column name="customer_login_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="total" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="customer_login_id"/>
+      <index name="email" unique="false" columns="email"/>
+      <index name="ip" unique="false" columns="ip"/>
+    </table>
     <table name="api_customer_online" schema="" catalog="prediq_api" type="TABLE">
       <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
       <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
@@ -6029,11 +6262,73 @@
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="ip"/>
     </table>
+    <table name="api_customer_reward" schema="" catalog="prediq_api" type="TABLE">
+      <column name="customer_reward_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="points" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="customer_reward_id"/>
+    </table>
+    <table name="api_customer_transaction" schema="" catalog="prediq_api" type="TABLE">
+      <column name="customer_transaction_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="customer_transaction_id"/>
+    </table>
+    <table name="api_download" schema="" catalog="prediq_api" type="TABLE">
+      <column name="download_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="filename" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="mask" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="download_id"/>
+    </table>
+    <table name="api_download_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="download_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="download_id,language_id"/>
+    </table>
+    <table name="api_event" schema="" catalog="prediq_api" type="TABLE">
+      <column name="event_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="code" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="trigger" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="action" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <primary-key name="PRIMARY" columns="event_id"/>
+    </table>
     <table name="api_extension" schema="" catalog="prediq_api" type="TABLE">
       <column name="extension_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="type" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <column name="code" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="extension_id"/>
+    </table>
+    <table name="api_filter" schema="" catalog="prediq_api" type="TABLE">
+      <column name="filter_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="filter_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="filter_id"/>
+    </table>
+    <table name="api_filter_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="filter_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="filter_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="filter_id,language_id"/>
+    </table>
+    <table name="api_filter_group" schema="" catalog="prediq_api" type="TABLE">
+      <column name="filter_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="filter_group_id"/>
+    </table>
+    <table name="api_filter_group_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="filter_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="filter_group_id,language_id"/>
     </table>
     <table name="api_geo_zone" schema="" catalog="prediq_api" type="TABLE">
       <column name="geo_zone_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -6045,9 +6340,7 @@
     </table>
     <table name="api_information" schema="" catalog="prediq_api" type="TABLE">
       <column name="information_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="parent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <column name="bottom" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="top" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
       <primary-key name="PRIMARY" columns="information_id"/>
@@ -6057,6 +6350,9 @@
       <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="title" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
       <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="meta_title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_description" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_keyword" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="information_id,language_id"/>
     </table>
     <table name="api_information_to_layout" schema="" catalog="prediq_api" type="TABLE">
@@ -6088,6 +6384,14 @@
       <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="layout_id"/>
     </table>
+    <table name="api_layout_module" schema="" catalog="prediq_api" type="TABLE">
+      <column name="layout_module_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="layout_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="code" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="position" sqlType="VARCHAR" precision="14" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="layout_module_id"/>
+    </table>
     <table name="api_layout_route" schema="" catalog="prediq_api" type="TABLE">
       <column name="layout_route_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="layout_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
@@ -6095,14 +6399,574 @@
       <column name="route" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="layout_route_id"/>
     </table>
+    <table name="api_length_class" schema="" catalog="prediq_api" type="TABLE">
+      <column name="length_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="value" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3"/>
+      <primary-key name="PRIMARY" columns="length_class_id"/>
+    </table>
+    <table name="api_length_class_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="length_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="title" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="unit" sqlType="VARCHAR" precision="4" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="length_class_id,language_id"/>
+    </table>
+    <table name="api_location" schema="" catalog="prediq_api" type="TABLE">
+      <column name="location_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="address" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="telephone" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="fax" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="geocode" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="open" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="comment" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <primary-key name="PRIMARY" columns="location_id"/>
+      <index name="name" unique="false" columns="name"/>
+    </table>
+    <table name="api_manufacturer" schema="" catalog="prediq_api" type="TABLE">
+      <column name="manufacturer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="manufacturer_id"/>
+    </table>
+    <table name="api_manufacturer_to_store" schema="" catalog="prediq_api" type="TABLE">
+      <column name="manufacturer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="manufacturer_id,store_id"/>
+    </table>
+    <table name="api_marketing" schema="" catalog="prediq_api" type="TABLE">
+      <column name="marketing_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="code" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="clicks" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="marketing_id"/>
+    </table>
+    <table name="api_modification" schema="" catalog="prediq_api" type="TABLE">
+      <column name="modification_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="code" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="author" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="version" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="link" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="xml" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="modification_id"/>
+    </table>
+    <table name="api_module" schema="" catalog="prediq_api" type="TABLE">
+      <column name="module_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="code" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="setting" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <primary-key name="PRIMARY" columns="module_id"/>
+    </table>
+    <table name="api_option" schema="" catalog="prediq_api" type="TABLE">
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="type" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="option_id"/>
+    </table>
+    <table name="api_option_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="option_id,language_id"/>
+    </table>
+    <table name="api_option_value" schema="" catalog="prediq_api" type="TABLE">
+      <column name="option_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="option_value_id"/>
+    </table>
+    <table name="api_option_value_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="option_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="option_value_id,language_id"/>
+    </table>
+    <table name="api_order" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="invoice_no" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="invoice_prefix" sqlType="VARCHAR" precision="26" scale="0" nullable="false" jdbcType="12"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="store_name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="store_url" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="firstname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="lastname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="telephone" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="fax" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="custom_field" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="payment_firstname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_lastname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_company" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_address_1" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_address_2" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_city" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_postcode" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_country" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_country_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="payment_zone" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_zone_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="payment_address_format" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="payment_custom_field" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="payment_method" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="payment_code" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_firstname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_lastname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_company" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_address_1" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_address_2" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_city" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_postcode" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_country" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_country_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="shipping_zone" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_zone_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="shipping_address_format" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="shipping_custom_field" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="shipping_method" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="shipping_code" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="comment" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="total" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="order_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="affiliate_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="commission" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="marketing_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="tracking" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="currency_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="currency_code" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="currency_value" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MS4wMDAwMDAwMA=="/>
+      <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="forwarded_ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="user_agent" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="accept_language" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="order_id"/>
+    </table>
+    <table name="api_order_custom_field" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="custom_field_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="custom_field_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="value" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="type" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="location" sqlType="VARCHAR" precision="16" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="order_custom_field_id"/>
+    </table>
+    <table name="api_order_fraud" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="country_match" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="country_code" sqlType="VARCHAR" precision="2" scale="0" nullable="false" jdbcType="12"/>
+      <column name="high_risk_country" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="distance" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="ip_region" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_city" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_latitude" sqlType="DECIMAL" precision="10" scale="6" nullable="false" jdbcType="3"/>
+      <column name="ip_longitude" sqlType="DECIMAL" precision="10" scale="6" nullable="false" jdbcType="3"/>
+      <column name="ip_isp" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_org" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_asnum" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="ip_user_type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_country_confidence" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_region_confidence" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_city_confidence" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_postal_confidence" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_postal_code" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_accuracy_radius" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="ip_net_speed_cell" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_metro_code" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="ip_area_code" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="ip_time_zone" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_region_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_domain" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_country_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_continent_code" sqlType="VARCHAR" precision="2" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ip_corporate_proxy" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="anonymous_proxy" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="proxy_score" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="is_trans_proxy" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="free_mail" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="carder_email" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="high_risk_username" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="high_risk_password" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_match" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_country" sqlType="VARCHAR" precision="2" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_name_match" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_phone_match" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="bin_phone" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="customer_phone_in_billing_location" sqlType="VARCHAR" precision="8" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ship_forward" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="city_postal_match" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ship_city_postal_match" sqlType="VARCHAR" precision="3" scale="0" nullable="false" jdbcType="12"/>
+      <column name="score" sqlType="DECIMAL" precision="10" scale="5" nullable="false" jdbcType="3"/>
+      <column name="explanation" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="risk_score" sqlType="DECIMAL" precision="10" scale="5" nullable="false" jdbcType="3"/>
+      <column name="queries_remaining" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="maxmind_id" sqlType="VARCHAR" precision="8" scale="0" nullable="false" jdbcType="12"/>
+      <column name="error" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="order_id"/>
+    </table>
+    <table name="api_order_history" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_history_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="order_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="notify" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="comment" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="order_history_id"/>
+    </table>
+    <table name="api_order_option" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="order_product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_option_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="value" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="type" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="order_option_id"/>
+    </table>
+    <table name="api_order_product" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="model" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="price" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="total" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="tax" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="reward" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="order_product_id"/>
+    </table>
+    <table name="api_order_recurring" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="reference" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="product_quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="recurring_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="recurring_description" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="recurring_frequency" sqlType="VARCHAR" precision="25" scale="0" nullable="false" jdbcType="12"/>
+      <column name="recurring_cycle" sqlType="SMALLINT" precision="5" scale="0" nullable="false" jdbcType="5"/>
+      <column name="recurring_duration" sqlType="SMALLINT" precision="5" scale="0" nullable="false" jdbcType="5"/>
+      <column name="recurring_price" sqlType="DECIMAL" precision="10" scale="4" nullable="false" jdbcType="3"/>
+      <column name="trial" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="trial_frequency" sqlType="VARCHAR" precision="25" scale="0" nullable="false" jdbcType="12"/>
+      <column name="trial_cycle" sqlType="SMALLINT" precision="5" scale="0" nullable="false" jdbcType="5"/>
+      <column name="trial_duration" sqlType="SMALLINT" precision="5" scale="0" nullable="false" jdbcType="5"/>
+      <column name="trial_price" sqlType="DECIMAL" precision="10" scale="4" nullable="false" jdbcType="3"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="order_recurring_id"/>
+    </table>
+    <table name="api_order_recurring_transaction" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_recurring_transaction_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="reference" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="amount" sqlType="DECIMAL" precision="10" scale="4" nullable="false" jdbcType="3"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="order_recurring_transaction_id"/>
+    </table>
+    <table name="api_order_status" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="order_status_id,language_id"/>
+    </table>
+    <table name="api_order_total" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_total_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="code" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="value" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="order_total_id"/>
+      <index name="order_id" unique="false" columns="order_id"/>
+    </table>
+    <table name="api_order_voucher" schema="" catalog="prediq_api" type="TABLE">
+      <column name="order_voucher_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="voucher_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="description" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="code" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="from_name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="from_email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="to_name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="to_email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="voucher_theme_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="message" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <primary-key name="PRIMARY" columns="order_voucher_id"/>
+    </table>
+    <table name="api_product" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="model" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="sku" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="upc" sqlType="VARCHAR" precision="12" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ean" sqlType="VARCHAR" precision="14" scale="0" nullable="false" jdbcType="12"/>
+      <column name="jan" sqlType="VARCHAR" precision="13" scale="0" nullable="false" jdbcType="12"/>
+      <column name="isbn" sqlType="VARCHAR" precision="17" scale="0" nullable="false" jdbcType="12"/>
+      <column name="mpn" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="location" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <column name="quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="stock_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="manufacturer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="shipping" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="price" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="points" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="tax_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="date_available" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="weight" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MC4wMDAwMDAwMA=="/>
+      <column name="weight_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="length" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MC4wMDAwMDAwMA=="/>
+      <column name="width" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MC4wMDAwMDAwMA=="/>
+      <column name="height" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MC4wMDAwMDAwMA=="/>
+      <column name="length_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="subtract" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="minimum" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MQ=="/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="viewed" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="product_id"/>
+    </table>
+    <table name="api_product_attribute" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="attribute_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <primary-key name="PRIMARY" columns="product_id,attribute_id,language_id"/>
+    </table>
+    <table name="api_product_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="description" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="tag" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="meta_title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_description" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="meta_keyword" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="product_id,language_id"/>
+      <index name="name" unique="false" columns="name"/>
+    </table>
+    <table name="api_product_discount" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_discount_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="priority" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MQ=="/>
+      <column name="price" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="date_start" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="date_end" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <primary-key name="PRIMARY" columns="product_discount_id"/>
+      <index name="product_id" unique="false" columns="product_id"/>
+    </table>
+    <table name="api_product_filter" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="filter_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,filter_id"/>
+    </table>
+    <table name="api_product_image" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_image_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="product_image_id"/>
+      <index name="product_id" unique="false" columns="product_id"/>
+    </table>
+    <table name="api_product_option" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="value" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="required" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <primary-key name="PRIMARY" columns="product_option_id"/>
+    </table>
+    <table name="api_product_option_value" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_option_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_value_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="subtract" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="price" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="price_prefix" sqlType="VARCHAR" precision="1" scale="0" nullable="false" jdbcType="12"/>
+      <column name="points" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="points_prefix" sqlType="VARCHAR" precision="1" scale="0" nullable="false" jdbcType="12"/>
+      <column name="weight" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3"/>
+      <column name="weight_prefix" sqlType="VARCHAR" precision="1" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="product_option_value_id"/>
+    </table>
+    <table name="api_product_recurring" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,recurring_id,customer_group_id"/>
+    </table>
+    <table name="api_product_related" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="related_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,related_id"/>
+    </table>
+    <table name="api_product_reward" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_reward_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="points" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="product_reward_id"/>
+    </table>
+    <table name="api_product_special" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_special_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_group_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="priority" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MQ=="/>
+      <column name="price" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3" def="MC4wMDAw"/>
+      <column name="date_start" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="date_end" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <primary-key name="PRIMARY" columns="product_special_id"/>
+      <index name="product_id" unique="false" columns="product_id"/>
+    </table>
+    <table name="api_product_to_category" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="category_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,category_id"/>
+      <index name="category_id" unique="false" columns="category_id"/>
+    </table>
+    <table name="api_product_to_download" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="download_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,download_id"/>
+    </table>
+    <table name="api_product_to_layout" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="layout_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="product_id,store_id"/>
+    </table>
+    <table name="api_product_to_store" schema="" catalog="prediq_api" type="TABLE">
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="product_id,store_id"/>
+    </table>
+    <table name="api_recurring" schema="" catalog="prediq_api" type="TABLE">
+      <column name="recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="price" sqlType="DECIMAL" precision="10" scale="4" nullable="false" jdbcType="3"/>
+      <column name="frequency" sqlType="ENUM" precision="10" scale="0" nullable="false" jdbcType="1"/>
+      <column name="duration" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="cycle" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="trial_status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="trial_price" sqlType="DECIMAL" precision="10" scale="4" nullable="false" jdbcType="3"/>
+      <column name="trial_frequency" sqlType="ENUM" precision="10" scale="0" nullable="false" jdbcType="1"/>
+      <column name="trial_duration" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="trial_cycle" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="sort_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="recurring_id"/>
+    </table>
+    <table name="api_recurring_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="recurring_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="recurring_id,language_id"/>
+    </table>
+    <table name="api_return" schema="" catalog="prediq_api" type="TABLE">
+      <column name="return_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="firstname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="lastname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="telephone" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="product" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="model" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="quantity" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="opened" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="return_reason_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="return_action_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="return_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="comment" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="date_ordered" sqlType="DATE" precision="10" scale="0" nullable="false" jdbcType="91" def="JzAwMDAtMDAtMDAn"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="return_id"/>
+    </table>
+    <table name="api_return_action" schema="" catalog="prediq_api" type="TABLE">
+      <column name="return_action_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="return_action_id,language_id"/>
+    </table>
+    <table name="api_return_history" schema="" catalog="prediq_api" type="TABLE">
+      <column name="return_history_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="return_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="return_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="notify" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="comment" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="return_history_id"/>
+    </table>
+    <table name="api_return_reason" schema="" catalog="prediq_api" type="TABLE">
+      <column name="return_reason_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="name" sqlType="VARCHAR" precision="128" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="return_reason_id,language_id"/>
+    </table>
+    <table name="api_return_status" schema="" catalog="prediq_api" type="TABLE">
+      <column name="return_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="return_status_id,language_id"/>
+    </table>
+    <table name="api_review" schema="" catalog="prediq_api" type="TABLE">
+      <column name="review_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="product_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="customer_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="author" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="rating" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="review_id"/>
+      <index name="product_id" unique="false" columns="product_id"/>
+    </table>
     <table name="api_setting" schema="" catalog="prediq_api" type="TABLE">
       <column name="setting_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="group" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="code" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <column name="key" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
       <column name="value" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
       <column name="serialized" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
       <primary-key name="PRIMARY" columns="setting_id"/>
+    </table>
+    <table name="api_stock_status" schema="" catalog="prediq_api" type="TABLE">
+      <column name="stock_status_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="stock_status_id,language_id"/>
     </table>
     <table name="api_store" schema="" catalog="prediq_api" type="TABLE">
       <column name="store_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -6126,10 +6990,11 @@
       <column name="firstname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <column name="lastname" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
       <column name="email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <column name="code" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
       <column name="ip" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
       <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
-      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="user_id"/>
     </table>
     <table name="api_user_group" schema="" catalog="prediq_api" type="TABLE">
@@ -6137,6 +7002,52 @@
       <column name="name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
       <column name="permission" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
       <primary-key name="PRIMARY" columns="user_group_id"/>
+    </table>
+    <table name="api_voucher" schema="" catalog="prediq_api" type="TABLE">
+      <column name="voucher_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="code" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="from_name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="from_email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="to_name" sqlType="VARCHAR" precision="64" scale="0" nullable="false" jdbcType="12"/>
+      <column name="to_email" sqlType="VARCHAR" precision="96" scale="0" nullable="false" jdbcType="12"/>
+      <column name="voucher_theme_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="message" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="status" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="voucher_id"/>
+    </table>
+    <table name="api_voucher_history" schema="" catalog="prediq_api" type="TABLE">
+      <column name="voucher_history_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="voucher_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="order_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="amount" sqlType="DECIMAL" precision="15" scale="4" nullable="false" jdbcType="3"/>
+      <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="voucher_history_id"/>
+    </table>
+    <table name="api_voucher_theme" schema="" catalog="prediq_api" type="TABLE">
+      <column name="voucher_theme_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="image" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="voucher_theme_id"/>
+    </table>
+    <table name="api_voucher_theme_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="voucher_theme_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="name" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="voucher_theme_id,language_id"/>
+    </table>
+    <table name="api_weight_class" schema="" catalog="prediq_api" type="TABLE">
+      <column name="weight_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="value" sqlType="DECIMAL" precision="15" scale="8" nullable="false" jdbcType="3" def="MC4wMDAwMDAwMA=="/>
+      <primary-key name="PRIMARY" columns="weight_class_id"/>
+    </table>
+    <table name="api_weight_class_description" schema="" catalog="prediq_api" type="TABLE">
+      <column name="weight_class_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="language_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="title" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="unit" sqlType="VARCHAR" precision="4" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="weight_class_id,language_id"/>
     </table>
     <table name="api_zone" schema="" catalog="prediq_api" type="TABLE">
       <column name="zone_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -6154,6 +7065,102 @@
       <column name="date_added" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
       <column name="date_modified" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93" def="JzAwMDAtMDAtMDAgMDA6MDA6MDAn"/>
       <primary-key name="PRIMARY" columns="zone_to_geo_zone_id"/>
+    </table>
+    <table name="quickbooks_config" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_config_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="qb_username" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="module" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="cfgkey" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="cfgval" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="cfgtype" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="cfgopts" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="write_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="mod_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_config_id"/>
+    </table>
+    <table name="quickbooks_log" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_log_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="quickbooks_ticket_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="batch" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="msg" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="log_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_log_id"/>
+      <index name="batch" unique="false" columns="batch"/>
+      <index name="quickbooks_ticket_id" unique="false" columns="quickbooks_ticket_id"/>
+    </table>
+    <table name="quickbooks_oauth" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_oauth_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="app_username" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="app_tenant" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="oauth_request_token" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="oauth_request_token_secret" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="oauth_access_token" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="oauth_access_token_secret" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qb_realm" sqlType="VARCHAR" precision="32" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qb_flavor" sqlType="VARCHAR" precision="12" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qb_user" sqlType="VARCHAR" precision="64" scale="0" nullable="true" jdbcType="12"/>
+      <column name="request_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="access_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="touch_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_oauth_id"/>
+    </table>
+    <table name="quickbooks_queue" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_queue_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="quickbooks_ticket_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="qb_username" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="qb_action" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ident" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="extra" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="qbxml" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="priority" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="qb_status" sqlType="CHAR" precision="1" scale="0" nullable="false" jdbcType="1"/>
+      <column name="msg" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="enqueue_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="dequeue_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_queue_id"/>
+      <index name="priority" unique="false" columns="priority"/>
+      <index name="qb_status" unique="false" columns="qb_status"/>
+      <index name="qb_username" unique="false" columns="qb_username,qb_action,ident,qb_status"/>
+      <index name="quickbooks_ticket_id" unique="false" columns="quickbooks_ticket_id"/>
+    </table>
+    <table name="quickbooks_recur" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_recur_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="qb_username" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="qb_action" sqlType="VARCHAR" precision="32" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ident" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="extra" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="qbxml" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="priority" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="run_every" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="recur_lasttime" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="enqueue_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_recur_id"/>
+      <index name="priority" unique="false" columns="priority"/>
+      <index name="qb_username" unique="false" columns="qb_username,qb_action,ident"/>
+    </table>
+    <table name="quickbooks_ticket" schema="" catalog="prediq_api" type="TABLE">
+      <column name="quickbooks_ticket_id" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="qb_username" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="ticket" sqlType="CHAR" precision="36" scale="0" nullable="false" jdbcType="1"/>
+      <column name="processed" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="lasterror_num" sqlType="VARCHAR" precision="32" scale="0" nullable="true" jdbcType="12"/>
+      <column name="lasterror_msg" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="ipaddr" sqlType="CHAR" precision="15" scale="0" nullable="false" jdbcType="1"/>
+      <column name="write_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="touch_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="quickbooks_ticket_id"/>
+      <index name="ticket" unique="false" columns="ticket"/>
+    </table>
+    <table name="quickbooks_user" schema="" catalog="prediq_api" type="TABLE">
+      <column name="qb_username" sqlType="VARCHAR" precision="40" scale="0" nullable="false" jdbcType="12"/>
+      <column name="qb_password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="qb_company_file" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qbwc_wait_before_next_update" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="qbwc_min_run_every_n_seconds" sqlType="INT UNSIGNED" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="status" sqlType="CHAR" precision="1" scale="0" nullable="false" jdbcType="1"/>
+      <column name="write_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="touch_datetime" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <primary-key name="PRIMARY" columns="qb_username"/>
     </table>
     <table name="admins" schema="" catalog="prediq_api_staging" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>

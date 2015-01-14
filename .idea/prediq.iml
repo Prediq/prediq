@@ -132,6 +132,7 @@
     <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bootstrap-sass (v2.3.2.2, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.2, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.7.6, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.15.5, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano-ext (v1.2.1, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chronic (v0.10.2, RVM: ruby-2.1.5 [prediq]) [gem]" level="application" />
