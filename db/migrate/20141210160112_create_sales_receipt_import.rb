@@ -13,7 +13,7 @@ class CreateSalesReceiptImport < ActiveRecord::Migration
       t.integer   :sync_token
       t.timestamp :transaction_date
       t.timestamp :meta_data_create_time
-      t.decimal   :sales_receipt_total, precision: 7, scale: 2
+      t.decimal   :sales_receipt_total, precision: 10, scale: 2
       t.integer   :bill_address_id
       t.string    :customer_ref_name
       t.integer   :customer_ref_value

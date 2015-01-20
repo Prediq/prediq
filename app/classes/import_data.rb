@@ -66,7 +66,7 @@ class ImportData
 
   end
 
-  def import_sales_data(user, query_str)
+  def import_sales_receipts(user, query_str)
 
     # user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
 
@@ -124,41 +124,6 @@ class ImportData
 
   end
 
-  def copy_from_import_to_live(user, rails_env)
-    # 1. Copy company info data from the prediq_api_import_#{rails_env}.company_info_imports table to the prediq_api_#{rails_env}.api_customer table,
-    #    checking first if the prediq_api_#{rails_env}.api_customer.qb_company_info_id record is not already there, via 'qb_company_info_id'
-
-    #   A). Clear out the data we are importing (if exists) from the prediq_api_#{$rails_env}.api_customer table
-    #   NOTE: We may not want to do this here because the data may have already been added by the self-registration process
-
-    # NOTE: next line for testing only so the insert into 'prediq_api_#{$rails_env}.api_customer' can be tested, comment out for PROD
-    $dbconn.execute("DELETE FROM prediq_api_#{$rails_env}.api_customer where customer_id = #{user.id}")
-    #   B). INSERT into the prediq_api_#{$rails_env}.api_customer table if it does not already exist (check via item 'qb_company_info_id')
-    # Get the company_import_imports rec for the user we are importing now
-    company_info_import_rec = CompanyInfoImport.where(api_customer_id: user.id).first
-    if company_info_import_rec
-      puts "*** CompanyInfoImport rec exists - can try the INSERT INTO 'api_customer'"
-      # Check if the target table 'prediq_api_#{$rails_env}.api_customer' already has the company_import_import.qb_company_info_id for the user.
-      # If not then do the INSERT, else raise an ERROR
-
-      live_rec_to_create    = $dbconn.select_all("SELECT * FROM prediq_api_#{$rails_env}.api_customer WHERE customer_id = #{user.id} AND qb_company_info_id = #{company_info_import_rec.qb_company_info_id}")[0] #['customer_id']
-      import_rec_to_insert  = $dbconn.select_all("SELECT * FROM prediq_api_import_#{$rails_env}.company_info_imports WHERE qb_company_info_id = #{company_info_import_rec.qb_company_info_id} AND api_customer_id = #{user.id}")[0] #['api_customer_id']
-
-      if live_rec_to_create.nil? && import_rec_to_insert.present?
-        # Insert the 'prediq_api_#{$rails_env}.api_customer' record using the 'prediq_api_import_#{$rails_env}.company_info_imports' data items
-        puts "***** live_rec_to_create: #{live_rec_to_create}";puts
-        puts "***** import_rec_to_insert: #{import_rec_to_insert}"
-
-      else
-        puts "ERROR: The api_customer record to create already exists"        if live_rec_to_create.present?
-        puts "ERROR: The company_info_imports record to copy does not exist"  if import_rec_to_insert.nil?
-      end
-
-      # Now do the same for the live 'api_address' data, using the address info from the 'prediq_api_import_#{$rails_env}.company_info_imports' data
-
-    else
-      puts "**** ERROR: The company_info_import_rec for user #{user.id} does not exist"
-    end
 
     # INSERT INTO users (full_name, login, password)
     # SELECT 'Mahbub Tito','tito',SHA1('12345') FROM DUAL
@@ -190,9 +155,141 @@ PROCESS FLOW:
 § = item already exists in api_customer
 
 =end
-  end
 
-  def etl_sales_data(user)
+  def etl_sales_receipts(user, rails_env)
+    user_id = user.id
+    # create the dimension table D_SALES_RECEIPTS records from the sales_receipt_imports records
+    $dbconn.execute("
+      INSERT INTO prediq_rdev_#{rails_env}.D_SALES_RECEIPTS(
+        -- keys
+        DATE_KEY,                -- aka TRANSACTION_DATE in the F_SALES table
+        API_CUSTOMER_ID_KEY,
+        API_ADDRESS_ID_KEY,
+        -- attributes
+        QB_SALES_RECEIPT_ID,
+        SYNC_TOKEN,
+        TRANSACTION_DATE,
+        META_DATA_CREATE_TIME,
+        META_DATA_LAST_UPDATED_TIME,
+        SALES_RECEIPT_TOTAL,
+        BILL_ADDRESS_ID,
+        BILL_ADDRESS_LINE_1,
+        BILL_ADDRESS_LINE_2,
+        BILL_ADDRESS_LINE_3,
+        BILL_ADDRESS_LINE_4,
+        BILL_ADDRESS_LINE_5,
+        BILL_ADDRESS_CITY,
+        BILL_ADDRESS_COUNTRY_SUB_DIVISION_CODE,
+        BILL_ADDRESS_POSTAL_CODE,
+        BILL_ADDRESS_LAT,
+        BILL_ADDRESS_LON,
+        BILL_EMAIL_ADDRESS,
+        SHIP_ADDRESS_ID,
+        SHIP_ADDRESS_LINE_1,
+        SHIP_ADDRESS_LINE_2,
+        SHIP_ADDRESS_LINE_3,
+        SHIP_ADDRESS_LINE_4,
+        SHIP_ADDRESS_LINE_5,
+        SHIP_ADDRESS_CITY,
+        SHIP_ADDRESS_COUNTRY_SUB_DIVISION_CODE,
+        SHIP_ADDRESS_POSTAL_CODE,
+        SHIP_ADDRESS_LAT,
+        SHIP_ADDRESS_LON,
+        SHIP_METHOD_REF_NAME,
+        SHIP_METHOD_REF_VALUE,
+        SHIP_METHOD_REF_TYPE,
+        SHIP_DATE,
+        DEPARTMENT_REF_NAME,
+        DEPARTMENT_REF_VALUE,
+        DEPARTMENT_REF_TYPE,
+        PAYMENT_METHOD_REF_NAME,
+        PAYMENT_METHOD_REF_VALUE,
+        PAYMENT_METHOD_REF_TYPE,
+        CUSTOMER_REF_NAME,
+        CUSTOMER_REF_VALUE,
+        CUSTOMER_REF_TYPE,
+        BALANCE,
+        PAYMENT_TYPE,
+        CURRENCY_REF,
+        EXCHANGE_RATE,
+        GLOBAL_TAX_CALCULATION,
+        HOME_TOTAL_AMOUNT,
+        APPLY_AFTER_TAX_DISCOUNT,
+        CUSTOMER_MEMO,
+        PRIVATE_NOTE,
+        LINKED_TRANSACTION_ID,
+        TXN_TAX_CODE_REF,
+        TOTAL_TAX,
+        CREATED_AT
+      )
+      SELECT
+        sri.transaction_date,
+        sri.api_customer_id,
+        a.address_id,
+        sri.qb_sales_receipt_id,
+        sri.sync_token,
+        sri.transaction_date,
+        sri.meta_data_create_time,
+        sri.meta_data_last_updated_time,
+        sri.sales_receipt_total,
+        sri.bill_address_id,
+        sri.bill_address_line_1,
+        sri.bill_address_line_2,
+        sri.bill_address_line_3,
+        sri.bill_address_line_4,
+        sri.bill_address_line_5,
+        sri.bill_address_city,
+        sri.bill_address_country_sub_division_code,
+        sri.bill_address_postal_code,
+        sri.bill_address_lat,
+        sri.bill_address_lon,
+        sri.bill_email_address,
+        sri.ship_address_id,
+        sri.ship_address_line_1,
+        sri.ship_address_line_2,
+        sri.ship_address_line_3,
+        sri.ship_address_line_4,
+        sri.ship_address_line_5,
+        sri.ship_address_city,
+        sri.ship_address_country_sub_division_code,
+        sri.ship_address_postal_code,
+        sri.ship_address_lat,
+        sri.ship_address_lon,
+        sri.ship_method_ref_name,
+        sri.ship_method_ref_value,
+        sri.ship_method_ref_type,
+        sri.ship_date,
+        sri.department_ref_name,
+        sri.department_ref_value,
+        sri.department_ref_type,
+        sri.payment_method_ref_name,
+        sri.payment_method_ref_value,
+        sri.payment_method_ref_type,
+        sri.customer_ref_name,
+        sri.customer_ref_value,
+        sri.customer_ref_type,
+        sri.balance,
+        sri.payment_type,
+        sri.currency_ref,
+        sri.exchange_rate,
+        sri.global_tax_calculation,
+        sri.home_total_amount,
+        sri.apply_after_tax_discount,
+        sri.customer_memo,
+        sri.private_note,
+        sri.linked_transaction_id,
+        sri.txn_tax_code_ref,
+        sri.total_tax,
+        sri.created_at
+      FROM prediq_api_import_#{rails_env}.sales_receipt_imports sri
+      JOIN prediq_api_#{rails_env}.api_address a ON a.customer_id = #{user_id}
+      WHERE sri.api_customer_id = #{user_id}
+      AND NOT EXISTS (SELECT API_CUSTOMER_ID FROM prediq_rdev_#{rails_env}.D_SALES_RECEIPTS
+        WHERE
+          API_CUSTOMER_ID     = sri.api_customer_id AND
+          QB_SALES_RECEIPT_ID = sri.qb_sales_receipt_id );
+      ")
+
   end
 
   private
@@ -250,7 +347,7 @@ PROCESS FLOW:
     # supported_languages
     # Data Services Extensions
     #   harmony type of company
-    #   forst transaction date
+    #   first transaction date
     #   industry type
     #   company type
     #   Offering SKU
@@ -316,6 +413,7 @@ PROCESS FLOW:
       qb_sales_receipt_id:          sales_receipt['id'],
       sync_token:                   sales_receipt['sync_token'], # not needed
       meta_data_create_time:        sales_receipt['meta_data']['create_time'],
+      meta_data_last_updated_time:  sales_receipt['meta_data']['last_updated_time'],
       # last_updated_time
       transaction_date:             sales_receipt['txn_date'],
       # department_ref repeat like customer_ref, below
@@ -339,7 +437,7 @@ PROCESS FLOW:
       total_tax:                   total_tax,
 
       bill_address_id:              bill_address['id'],
-      bill_address_line_1:          bill_address['line1'],
+      bill_address_line_1:          (bill_address['line1']) ? bill_address['line1'].gsub( / *\n+/, ',' ) : nil,  # data like this: "line1"=>"Diego Rodriguez\n321 Channing\nPalo Alto, CA  94303" was truncing at the first \n
       bill_address_line_2:          bill_address['line2'],
       bill_address_line_3:          bill_address['line3'],
       bill_address_line_4:          bill_address['line4'],
@@ -351,7 +449,7 @@ PROCESS FLOW:
       bill_address_lon:             bill_address['lon'],
 
       ship_address_id:              ship_address_id,
-      ship_address_line_1:          ship_address_line_1,
+      ship_address_line_1:          (ship_address_line_1) ? ship_address['line1'].gsub( / *\n+/, ',' ) : nil, # as above for bill_address_line_1
       ship_address_line_2:          ship_address_line_2,
       ship_address_line_3:          ship_address_line_3,
       ship_address_line_4:          ship_address_line_4,
@@ -385,7 +483,8 @@ PROCESS FLOW:
       # exchange_rate
       global_tax_calculation:       (sales_receipt['global_tax_calculation']) ? sales_receipt['global_tax_calculation'] : nil,
       # global_tax_calculation
-      home_total_amount:            (sales_receipt['home_total_amount']) ? sales_receipt['home_total_amount'] : nil
+      home_total_amount:            (sales_receipt['home_total_amount']) ? sales_receipt['home_total_amount'] : nil,
+      created_at:                   DateTime.now
       # home_total_amount
     }
   end
@@ -470,7 +569,7 @@ current_path    = ARGV[2]
 api_customer_id = ARGV[3]
 
 # To run the shell script that runs this job:
-# Local (existing api_customer user #2):
+# Local (existing api_customer user #9 that was created for testing):
 # current_path=/Users/billkiskin/prediq/prediq_api;func=get_first_yr;rails_env=development;api_customer_id=2; cd ${current_path} && RAILS_ENV=import_development app/classes/run_import_data.sh ${func} ${rails_env} ${current_path} ${api_customer_id}
 # current_path=/Users/billkiskin/prediq/prediq_api;func=get_first_yr;rails_env=development;api_customer_id=9; cd ${current_path} && RAILS_ENV=import_development app/classes/run_import_data.sh ${func} ${rails_env} ${current_path} ${api_customer_id}
 # Local (newly created/registered api_customer user #9):
@@ -492,21 +591,38 @@ if func == "get_first_yr"
 
   NOTE:  Since we are now doing this in PHP there is no need to import the company_info as the prediq_api_<rails_env>.api_customer
   record AND the prediq_api_<rails_env>.quickbook_auths records have already been created, so we do not need this part
-  # 2. write the CompanyInfo data to the CompanyInfoImport relation
+  # was step 2. write the CompanyInfo data to the CompanyInfoImport relation
   id.import_company_info_data(user)
 =end
 
   # 2. Import SalesReceipt data
   # Initial First Year import for the Sales Forecast
   # Calc the present date backwards one year for the query first year's sales receipt data
+
+=begin
+  # NOTE: tested OK so we comment it out for now
   query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
   qb_entity = 'SalesReceipt'
   query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
   puts "********* query_str: #{query_str}"
 
-  id.import_sales_data(user, query_str)
+  id.import_sales_receipts(user, query_str)
+=end
+
+
+  # 3. Convert the prediq_api_import_<rails_env>.sales_receipt_imports records to DW records:
+  # d_sales_receipts, then f_sales_receipts
+  # NOTE: When copying SalesReceipt data, look for some 'address_id' to attempt to correlate sales receipts with an address_id
+
+  # NOTE: For testing ONLY, we delete any prediq_rdev_#{rails_env}.D_SALES_RECEIPTS recs for our test user_id 9
+  id.etl_sales_receipts(user, rails_env)
+
 
 =begin
+
+  Split out the company info and the address info from the prediq_api_import_#{rails_env}.company_info_imports table
+  #    and copy to the prediq_api_#{rails_env}.api_customer and the prediq_api_#{rails_env}.api_address tables, if the
+  #    corresponding data is not already there.
 
   # 4. Check if they have any Invoices
   query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
@@ -515,12 +631,6 @@ if func == "get_first_yr"
 
   id.import_invoices_data(user, query_str)
 
-  # 5. Split out the company info and the address info from the prediq_api_import_#{rails_env}.company_info_imports table
-  #    and copy to the prediq_api_#{rails_env}.api_customer and the prediq_api_#{rails_env}.api_address tables, if the 
-  #    corresponding data is not already there.
-  # NOTE: When copying SalesReceipt data, look for some 'address_id' to attempt to correlate sales receipts with an address_id
-
-  id.copy_from_import_to_live(user, rails_env)
 
 =end
 
@@ -934,5 +1044,41 @@ OBSOLETE CODE:
     # connection.execute("SQL query")
   end
 
+    def copy_from_import_to_live(user, rails_env)
+    # 1. Copy company info data from the prediq_api_import_#{rails_env}.company_info_imports table to the prediq_api_#{rails_env}.api_customer table,
+    #    checking first if the prediq_api_#{rails_env}.api_customer.qb_company_info_id record is not already there, via 'qb_company_info_id'
+
+    #   A). Clear out the data we are importing (if exists) from the prediq_api_#{$rails_env}.api_customer table
+    #   NOTE: We may not want to do this here because the data may have already been added by the self-registration process
+
+    # NOTE: next line for testing only so the insert into 'prediq_api_#{$rails_env}.api_customer' can be tested, comment out for PROD
+    $dbconn.execute("DELETE FROM prediq_api_#{$rails_env}.api_customer where customer_id = #{user.id}")
+    #   B). INSERT into the prediq_api_#{$rails_env}.api_customer table if it does not already exist (check via item 'qb_company_info_id')
+    # Get the company_import_imports rec for the user we are importing now
+    company_info_import_rec = CompanyInfoImport.where(api_customer_id: user.id).first
+    if company_info_import_rec
+      puts "*** CompanyInfoImport rec exists - can try the INSERT INTO 'api_customer'"
+      # Check if the target table 'prediq_api_#{$rails_env}.api_customer' already has the company_import_import.qb_company_info_id for the user.
+      # If not then do the INSERT, else raise an ERROR
+
+      live_rec_to_create    = $dbconn.select_all("SELECT * FROM prediq_api_#{$rails_env}.api_customer WHERE customer_id = #{user.id} AND qb_company_info_id = #{company_info_import_rec.qb_company_info_id}")[0] #['customer_id']
+      import_rec_to_insert  = $dbconn.select_all("SELECT * FROM prediq_api_import_#{$rails_env}.company_info_imports WHERE qb_company_info_id = #{company_info_import_rec.qb_company_info_id} AND api_customer_id = #{user.id}")[0] #['api_customer_id']
+
+      if live_rec_to_create.nil? && import_rec_to_insert.present?
+        # Insert the 'prediq_api_#{$rails_env}.api_customer' record using the 'prediq_api_import_#{$rails_env}.company_info_imports' data items
+        puts "***** live_rec_to_create: #{live_rec_to_create}";puts
+        puts "***** import_rec_to_insert: #{import_rec_to_insert}"
+
+      else
+        puts "ERROR: The api_customer record to create already exists"        if live_rec_to_create.present?
+        puts "ERROR: The company_info_imports record to copy does not exist"  if import_rec_to_insert.nil?
+      end
+
+      # Now do the same for the live 'api_address' data, using the address info from the 'prediq_api_import_#{$rails_env}.company_info_imports' data
+
+    else
+      puts "**** ERROR: The company_info_import_rec for user #{user.id} does not exist"
+    end
+  end
 
 =end

@@ -1,0 +1,1 @@
+ALTER TABLE prediq_api_import_development.sales_receipt_imports CHANGE address_id api_address_id INT(11);

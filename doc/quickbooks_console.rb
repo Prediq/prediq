@@ -217,6 +217,7 @@ Company Information
  "discount_line_detail"=>nil,
  "journal_entry_line_detail"=>nil}
 
+bill_address = {"bill_address"=>{"id"=>66,"line1"=>"Diego Rodriguez\n321 Channing\nPalo Alto, CA  94303"}}
 ************************************************************************************************************************
 
 [1] pry(main)> user = User.find 2

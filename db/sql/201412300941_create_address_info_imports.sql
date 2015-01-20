@@ -26,6 +26,7 @@ CREATE TABLE prediq_api_import_development.address_info_imports (
 --   KEY `address_id` (`address_id`)
 
 
+
 /*
  "company_address"=>
   {"id"=>1,
