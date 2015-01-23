@@ -158,7 +158,7 @@ PROCESS FLOW:
 
   def etl_sales_receipts(user, rails_env)
     user_id = user.id
-    # create the dimension table D_SALES_RECEIPTS records from the sales_receipt_imports records
+    # INSERT the the sales_receipt_imports records into the dimension table D_SALES_RECEIPTS
     $dbconn.execute("
       INSERT INTO prediq_rdev_#{rails_env}.D_SALES_RECEIPTS(
         -- keys
@@ -168,7 +168,7 @@ PROCESS FLOW:
         -- attributes
         QB_SALES_RECEIPT_ID,
         SYNC_TOKEN,
-        TRANSACTION_DATE,
+        TRANSACTION_DATE,        -- aka DATE_KEY
         META_DATA_CREATE_TIME,
         META_DATA_LAST_UPDATED_TIME,
         SALES_RECEIPT_TOTAL,
@@ -290,6 +290,37 @@ PROCESS FLOW:
           QB_SALES_RECEIPT_ID = sri.qb_sales_receipt_id );
       ")
 
+    # INSERT the the D_SALES_RECEIPTS records into the fact table F_SALES
+    $dbconn.execute("
+      INSERT INTO prediq_rdev_development.F_SALES (
+	      TRANSACTION_DATE,
+	      API_CUSTOMER_ID,
+	      API_ADDRESS_ID,
+	      SALES_TOTAL,
+	      INSERT_DATE )
+      SELECT
+        dsr.DATE_KEY,
+        dsr.API_CUSTOMER_ID_KEY,
+        dsr.API_ADDRESS_ID_KEY,
+        SUM(dsr.SALES_RECEIPT_TOTAL),
+        CURDATE()
+      FROM prediq_rdev_development.D_SALES_RECEIPTS dsr
+      WHERE
+        (dsr.API_CUSTOMER_ID_KEY = 9 AND
+        dsr.CREATED_AT >= DATE_SUB(CURDATE(),INTERVAL 2 DAY))
+        AND NOT EXISTS (SELECT TRANSACTION_DATE FROM prediq_rdev_development.F_SALES
+          WHERE
+            TRANSACTION_DATE  = dsr.DATE_KEY 				      AND
+            API_CUSTOMER_ID   = dsr.API_CUSTOMER_ID_KEY 	AND
+            API_ADDRESS_ID 	  = 	dsr.API_ADDRESS_ID_KEY )
+      GROUP BY
+        dsr.DATE_KEY,
+          dsr.API_CUSTOMER_ID_KEY,
+            dsr.API_ADDRESS_ID_KEY
+      ORDER BY
+        dsr.DATE_KEY,
+          dsr.API_CUSTOMER_ID_KEY,
+            dsr.API_ADDRESS_ID_KEY);" )
   end
 
   private
