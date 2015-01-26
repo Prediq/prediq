@@ -27,6 +27,7 @@ class ImportData
   # TODO: read this in from secrets.yml
   QB_KEY = 'qyprda7A7mXjuUJJ8Zr9q6uOibccoB'
   QB_SECRET = 'EeVlrvwviyGoXBf8kkEp9V8h9kVYXr3QWEv4VGo9'
+  BATCH_SIZE = 1000
 
   def initialize(msg, rails_env, current_path, api_customer_id)
     puts msg
@@ -66,7 +67,7 @@ class ImportData
 
   end
 
-  def import_sales_receipts(user, query_str)
+  def import_sales_receipts(user, query_str, batch_size)
 
     # user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
 
@@ -618,76 +619,67 @@ if func == "get_first_yr"
 
   user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
 
-=begin
-
-  NOTE:  Since we are now doing this in PHP there is no need to import the company_info as the prediq_api_<rails_env>.api_customer
-  record AND the prediq_api_<rails_env>.quickbook_auths records have already been created, so we do not need this part
-  # was step 2. write the CompanyInfo data to the CompanyInfoImport relation
-  id.import_company_info_data(user)
-=end
-
-  # 2. Import SalesReceipt data
+  # 1. Import SalesReceipt data
   # Initial First Year import for the Sales Forecast
   # Calc the present date backwards one year for the query first year's sales receipt data
 
-=begin
   # NOTE: tested OK so we comment it out for now
   query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
   qb_entity = 'SalesReceipt'
   query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
   puts "********* query_str: #{query_str}"
 
-  id.import_sales_receipts(user, query_str)
-=end
+  id.import_sales_receipts(user, query_str, BATCH_SIZE)
 
-
-  # 3. Convert the prediq_api_import_<rails_env>.sales_receipt_imports records to DW records:
-  # d_sales_receipts, then f_sales_receipts
+  # 2. Convert the prediq_api_import_<rails_env>.sales_receipt_imports records to DW records:
+  # D_SALES_RECEIPTS, then F_SALES
   # NOTE: When copying SalesReceipt data, look for some 'address_id' to attempt to correlate sales receipts with an address_id
 
   # NOTE: For testing ONLY, we delete any prediq_rdev_#{rails_env}.D_SALES_RECEIPTS recs for our test user_id 9
   id.etl_sales_receipts(user, rails_env)
 
-
-=begin
-
-  Split out the company info and the address info from the prediq_api_import_#{rails_env}.company_info_imports table
-  #    and copy to the prediq_api_#{rails_env}.api_customer and the prediq_api_#{rails_env}.api_address tables, if the
-  #    corresponding data is not already there.
-
-  # 4. Check if they have any Invoices
-  query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
-  qb_entity = 'Invoice'
-  query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
-
-  id.import_invoices_data(user, query_str)
-
-
-=end
-
-  # Now create the Data Warehouse records, starting with the Customer dimension, then the F_Sales data
-  # Note that I manually created a new api_customer user "Bill Kiskin" to mimic the new user signing up, as opposed to using an existing user.
-  # We can then use that new customer to associate the ETL data with
-=begin
-  Sales Data needs to be captured in the following format:
-
-    `PRIMKEY` int(11) NOT NULL AUTO_INCREMENT,
-    `CUSTOMER_ID` int(11) DEFAULT NULL,        -- the api
-    `address_id` int(11) NOT NULL,
-    `SALES` float DEFAULT NULL,
-    `TRANSACTION_DATE` date DEFAULT NULL,
-    `INSERT_DATE` date DEFAULT NULL,
-    PRIMARY KEY (`PRIMKEY`),
-    KEY `F_SALES_CUST` (`CUSTOMER_ID`),
-    KEY `F_SALES_DATE` (`TRANSACTION_DATE`),
-    KEY `address_id` (`address_id`)
-
-=end
   # TODO: In cases where there are BOTH SalesReceipt and Invoice data, we need to decide which to use...
 end
 
+if func == "get_five_yr"
+  # NOTE: Since this job will run later, probably at night after the "get_first_yr" job has been run contemporaneously,
+  # we need to first check if the api_customer_id has F_SALES records at all, then get the MIN and MAX TxnDate
+  # (TRANSACTION_DATE) to be able to make the appropriate 'query_date' to feed into the QB API query.
+
+  puts;puts "********* Running get_five_yr job; rails_env = #{rails_env}; api_customer_id = #{api_customer_id}";puts
+
+  # 1. Instantiate the class
+  id = ImportData.new( "Starting ImportData Job, func = '#{func}': #{Time.now}", rails_env, current_path, api_customer_id )
+
+  user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
+
+  # 2. Query the DW to get the MIN(TRANSACTION_DATE) from F_SALES to make the
+  # Initial First Year import for the Sales Forecast
+  # Calc the present date backwards one year for the query first year's sales receipt data query_date
+  qb_entity = 'SalesReceipt'
+  min_max_dates = $dbconn.select_all("SELECT MIN(TRANSACTION_DATE) as min_transaction_date, MAX(TRANSACTION_DATE) as max_transaction_date FROM prediq_rdev_#{$rails_env}.F_SALES WHERE API_CUSTOMER_ID = #{user.id}")[0]
+  min_transaction_date, max_transaction_date = min_max_dates['min_transaction_date'], min_max_dates['max_transaction_date']
+  if min_transaction_date # we have F_SALES data for the customer
+    # go back 5 years from from max_transaction_date UP TO min_transaction_date - 1 day (to ensure contiguous, not overlapping date ranges)
+    query_date_min = (Date.parse(max_transaction_date) - 5.year).strftime('%Y-%m-%d')
+    query_date_max = (Date.parse(min_transaction_date) - 1.day).strftime('%Y-%m-%d')
+    query_str      = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date_min}' AND TxnDate <= '#{query_date_max}'"
+  else
+    # min_transaction_date is nil sothere is the chance that the 'get_first_year' job blew so we try for the full five years
+    query_date_min = (Date.parse(max_transaction_date) - 5.year).strftime('%Y-%m-%d')
+    query_str      = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date_min}'"
+  end
+  # 3. Import SalesReceipt data
+  puts "********* query_str: #{query_str}"
+
+  id.import_sales_receipts(user, query_str, BATCH_SIZE)
 
 
+end
+
+if func == "get_daily"
+  # get the MAX(TRANSACTION_DATE) for the
+end
 =begin
 
   Initial User Flow:
@@ -1113,3 +1105,46 @@ OBSOLETE CODE:
   end
 
 =end
+
+=begin
+
+  Split out the company info and the address info from the prediq_api_import_#{rails_env}.company_info_imports table
+  #    and copy to the prediq_api_#{rails_env}.api_customer and the prediq_api_#{rails_env}.api_address tables, if the
+  #    corresponding data is not already there.
+
+  # 4. Check if they have any Invoices
+  query_date = (DateTime.now - 1.year).strftime('%Y-%m-%d')
+  qb_entity = 'Invoice'
+  query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
+
+  id.import_invoices_data(user, query_str)
+
+
+=end
+
+=begin
+  Sales Data needs to be captured in the following format:
+
+    `PRIMKEY` int(11) NOT NULL AUTO_INCREMENT,
+    `CUSTOMER_ID` int(11) DEFAULT NULL,        -- the api
+    `address_id` int(11) NOT NULL,
+    `SALES` float DEFAULT NULL,
+    `TRANSACTION_DATE` date DEFAULT NULL,
+    `INSERT_DATE` date DEFAULT NULL,
+    PRIMARY KEY (`PRIMKEY`),
+    KEY `F_SALES_CUST` (`CUSTOMER_ID`),
+    KEY `F_SALES_DATE` (`TRANSACTION_DATE`),
+    KEY `address_id` (`address_id`)
+
+=end
+=begin
+
+  NOTE:  Since we are now doing this in PHP there is no need to import the company_info as the prediq_api_<rails_env>.api_customer
+  record AND the prediq_api_<rails_env>.quickbook_auths records have already been created, so we do not need this part
+  # was step 2. write the CompanyInfo data to the CompanyInfoImport relation
+  id.import_company_info_data(user)
+=end
+
+
+
+
