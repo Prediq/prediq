@@ -85,11 +85,14 @@ class ImportData
     puts "***** sales_receipt.count: #{sales_receipts.count}"
 
     # iterate over the SalesReceipt data and create one record at a time
+    cntr = 0
     sales_receipts.each_with_index do |sales_receipt, idx|
       puts "**** Importing SalesReceipt#: #{idx+1}"
       SalesReceiptImport.create!(sales_receipt_attribs(sales_receipt, user.id))
+      cntr += 1
     end
 
+    cntr
     # NOTE: By this time we already have a User (api_customer) created from the Quickbooks Customer_info data, so we get the user via its id
     # 1.  Delete the recs, if any, for the SalesReceipt data for that user
 
@@ -629,8 +632,13 @@ if func == "get_first_yr"
   query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date}'"
   puts "********* query_str: #{query_str}"
 
-  id.import_sales_receipts(user, query_str, BATCH_SIZE)
+  num_recs = id.import_sales_receipts(user, query_str, BATCH_SIZE)
 
+  if num_recs > 0
+    puts "#{func}: There were #{num_recs} #{qb_entity} records imported via: #{query_str}"
+  else
+    puts "#{func}: There were NO #{qb_entity} records imported via: #{query_str}"
+  end
   # 2. Convert the prediq_api_import_<rails_env>.sales_receipt_imports records to DW records:
   # D_SALES_RECEIPTS, then F_SALES
   # NOTE: When copying SalesReceipt data, look for some 'address_id' to attempt to correlate sales receipts with an address_id
@@ -658,28 +666,73 @@ if func == "get_five_yr"
   # Calc the present date backwards one year for the query first year's sales receipt data query_date
   qb_entity = 'SalesReceipt'
   min_max_dates = $dbconn.select_all("SELECT MIN(TRANSACTION_DATE) as min_transaction_date, MAX(TRANSACTION_DATE) as max_transaction_date FROM prediq_rdev_#{$rails_env}.F_SALES WHERE API_CUSTOMER_ID = #{user.id}")[0]
-  min_transaction_date, max_transaction_date = min_max_dates['min_transaction_date'], min_max_dates['max_transaction_date']
+  min_transaction_date, max_transaction_date, query_str = min_max_dates['min_transaction_date'], min_max_dates['max_transaction_date'], nil
   if min_transaction_date # we have F_SALES data for the customer
-    # go back 5 years from from max_transaction_date UP TO min_transaction_date - 1 day (to ensure contiguous, not overlapping date ranges)
+    # go back 5 years from from max_transaction_date UP TO min_transaction_date - 1 day to ensure contiguous, not overlapping date ranges.
+    # ( as a fallback the insert into F_SALES_RECEIPT and F_SALES will not allow duplicates as defined by the unique compound keys )
     query_date_min = (Date.parse(max_transaction_date) - 5.year).strftime('%Y-%m-%d')
     query_date_max = (Date.parse(min_transaction_date) - 1.day).strftime('%Y-%m-%d')
     query_str      = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date_min}' AND TxnDate <= '#{query_date_max}'"
   else
-    # min_transaction_date is nil sothere is the chance that the 'get_first_year' job blew so we try for the full five years
+    # min_transaction_date is nil so there is the chance that the 'get_first_year' job blew so we try for the full five years
     query_date_min = (Date.parse(max_transaction_date) - 5.year).strftime('%Y-%m-%d')
     query_str      = "SELECT * FROM #{qb_entity} WHERE TxnDate >= '#{query_date_min}'"
   end
   # 3. Import SalesReceipt data
   puts "********* query_str: #{query_str}"
 
-  id.import_sales_receipts(user, query_str, BATCH_SIZE)
+  num_recs = id.import_sales_receipts(user, query_str, BATCH_SIZE)
 
+  if num_recs > 0
+    puts "#{func}: There were #{num_recs} #{qb_entity} records imported via: #{query_str}"
+  else
+    puts "#{func}: There were NO #{qb_entity} records imported via: '#{query_str}'"
+  end
 
 end
 
 if func == "get_daily"
-  # get the MAX(TRANSACTION_DATE) for the
+  # New data: get the MAX(TRANSACTION_DATE) for the F_SALES and select greater than that TxnDate and bring those in
+  # "meta_data"=>{"create_time"=>2014-11-01 13:40:52 -0500, "last_updated_time"=>2014-11-01 13:40:52 -0500},
+
+  puts;puts "********* Running get_daily_and_changes job; rails_env = #{rails_env}; api_customer_id = #{api_customer_id}";puts
+
+  # 1. Instantiate the class
+  id = ImportData.new( "Starting ImportData Job, func = '#{func}': #{Time.now}", rails_env, current_path, api_customer_id )
+
+  user = UserImport.includes(:quickbooks_auth_import).find(api_customer_id)
+
+  # New Data: get MAX(TRANSACTION_DATE) from F_SALES and select SalesReceipt recs > that date
+  qb_entity = 'SalesReceipt'
+  min_max_dates = $dbconn.select_all("SELECT MIN(TRANSACTION_DATE) as min_transaction_date, MAX(TRANSACTION_DATE) as max_transaction_date FROM prediq_rdev_#{$rails_env}.F_SALES WHERE API_CUSTOMER_ID = #{user.id}")[0]
+  min_transaction_date, max_transaction_date, query_str = min_max_dates['min_transaction_date'], min_max_dates['max_transaction_date'], nil
+  if max_transaction_date
+    query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate > '#{max_transaction_date}'"
+  else
+    puts "There were NO new #{qb_entity} records for customer #{api_customer_id} that were greater than #{max_transaction_date}"
+  end
+
+  if query_str
+
+    num_recs = id.import_sales_receipts(user, query_str, BATCH_SIZE)
+
+    if num_recs > 0
+      puts "#{func}: There were #{num_recs} #{qb_entity} records imported via: #{query_str}"
+    else
+      puts "#{func}: There were NO #{qb_entity} records imported via: '#{query_str}'"
+    end
+
+  end
 end
+
+# Working ON: get_changes
+if func == "get_changes"
+  # Changed Data: where the "meta_data_last_updated_time" is different from the "meta_data_last_create_time",
+  # replace that record in D_SALES_RECEIPTS for that TxnDate, then update the F_SALES table for that TRANSACTION_DATE with
+  # the new aggregation from D_SALES_RECEIPTS for that TRANSACTION_DATE
+
+end
+
 =begin
 
   Initial User Flow:
