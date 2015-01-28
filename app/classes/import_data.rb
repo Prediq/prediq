@@ -593,8 +593,19 @@ PROCESS FLOW:
     }.merge(ship_address_attribs)
   end
 
+  def create_sales_receipts_changes_temp_table
+    $dbconn.execute("
+      CREATE TEMPORARY TABLE sales_receipts_changes_temp (
+      ID MEDIUMINT                  NOT NULL AUTO_INCREMENT,
+      API_CUSTOMER_ID     INT(11)   NOT NULL,
+      TRANSACTION_DATE    DATE      NOT NULL,
+      BILL_ADDRESS_ID     INT(11)   NOT NULL,
+      API_ADDRESS_ID      INT(11)   NOT NULL);")
+  end
 
-
+  def drop_sales_receipts_changes_temp_table
+    $dbconn.execute("DROP TABLE sales_receipts_changes_temp;")
+  end
 end
 
 # passed in arguments from the run_load_pg_data.sh script:
@@ -727,9 +738,64 @@ end
 
 # Working ON: get_changes
 if func == "get_changes"
-  # Changed Data: where the "meta_data_last_updated_time" is different from the "meta_data_last_create_time",
-  # replace that record in D_SALES_RECEIPTS for that TxnDate, then update the F_SALES table for that TRANSACTION_DATE with
-  # the new aggregation from D_SALES_RECEIPTS for that TRANSACTION_DATE
+=begin
+  Changed Data: where the "meta_data_last_updated_time" is different from the "meta_data_last_create_time",
+  replace that record in D_SALES_RECEIPTS for that TxnDate, then update the F_SALES table for that TRANSACTION_DATE with
+  the new aggregation from D_SALES_RECEIPTS for that TRANSACTION_DATE
+  We could just go back one month and pick up every change.  This would involve processing the same record multiple times if,
+  say, the change was yesterday,  so we go back 30 days and get that change, then the next day that change is now 2 days
+  ago, so we get it again, and so on.  However, this will also encompass all other changes too, so this is a good strategy.
+=end
+
+=begin
+
+************************************************************************************************************************
+DESCRIPTION
+
+  1). Get changed recs in the last 30 days, taking note of the meta_data_create_time so that we can get ALL the rest of the
+  SalesReceipt recs for that data.  We must process that entire (TRANSACTION_DATE / API_CUSTOMER_ID / API_ADDRESS_ID)'s data
+  all over again
+
+  2). Then replace those records in D_SALES_RECEIPTS and finally, sum them via:
+
+  dsr.DATE_KEY,
+    dsr.API_CUSTOMER_ID_KEY,
+      dsr.API_ADDRESS_ID_KEY
+
+  Just like the initial F_SALES insert, and update that record in place in F_SALES
+
+************************************************************************************************************************
+PROCESS FLOW STEPS
+
+  - For each quickbook_auths Customer, IF they have any D_SALES_RECEIPTS recs at all:
+    - For each changed QB SalesReceipt rec in the last 30 days, store the:
+
+    Store the TRANSACTION_DATE, API_CUSTOMER_ID, "bill_address"=>{"id"=>66...} in a temp table, one row per combo
+
+    Table "SALES_RECEIPTS_CHANGES_TEMP"
+      ID                  INT(11)
+      API_CUSTOMER_ID     INT(11)   => passed in as the argument 'api_customer_id'
+      TRANSACTION_DATE    date      => (from QB)
+      BILL_ADDRESS_ID     INT(11)   => (from QB) "bill_address"=>{"id"=>66...}
+      API_ADDRESS_ID      INT(11)   => use the 'BILL_ADDRESS_ID', above, to select the API_ADDRESS_ID from D_SALES_RECEIPTS,
+                                    write from D_SALES_RECEIPTS.API_ADDRESS_ID.  This will be an INSERT with a JOIN
+                                    to D_SALES_RECEIPTS on BILL_ADDRESS_ID (above) = (from QB) "bill_address"=>{"id"=>66...}
+
+    Ruby iterate over this record set and get the set of SalesReceipt recs for that QB TRANSACTION_DATE, QB BILL_ADDRESS_ID ("bill_address"=>{"id"=>66...})
+    Then:
+      1. Delete the F_SALES recs via (TRANSACTION_DATE, API_CUSTOMER_ID, API_ADDRESS_ID)
+          using: SALES_RECEIPTS_CHANGES_TEMP.TRANSACTION_DATE, SALES_RECEIPTS_CHANGES_TEMP.API_CUSTOMER_ID, SALES_RECEIPTS_CHANGES_TEMP.API_ADDRESS_ID
+      2. Delete the D_SALES_RECEIPTS recs via (DATE_KEY, API_CUSTOMER_ID, API_ADDRESS_ID)
+          using: SALES_RECEIPTS_CHANGES_TEMP.TRANSACTION_DATE, SALES_RECEIPTS_CHANGES_TEMP.API_CUSTOMER_ID, SALES_RECEIPTS_CHANGES_TEMP.API_ADDRESS_ID
+      2. do "import_sales_receipts(user, query_str, batch_size)", with:
+        qb_entity = 'SalesReceipt'
+        query_str = "SELECT * FROM #{qb_entity} WHERE TxnDate = '#{SALES_RECEIPTS_CHANGES_TEMP.TRANSACTION_DATE}'"
+      3. do "def etl_sales_receipts(user, rails_env)"
+      DONE
+
+=end
+  # 1). Get changed recs in the last 30 days
+
 
 end
 
