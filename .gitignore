@@ -25,3 +25,9 @@ config/secrets.yml
 /doc/credentials.txt
 
 .idea/*
+
+/doc/quickbooks_encrypted_creds.ini
+/doc/quickbooks_encrypted_creds.txt
+/doc/database_credentials.txt
+
+
