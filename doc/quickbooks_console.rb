@@ -1,3 +1,4 @@
+
 user = User.includes(:user_addresses).find 2
 company_info = QuickbooksCommunicator.new(user.quickbooks_auth).company_info
 sales_receipts = QuickbooksCommunicator.new(user.quickbooks_auth).sales_receipts
@@ -291,13 +292,13 @@ rails g migration CreateLineItemImport sales_receipt_import_id:integer customer_
 linked_transactions:string detail_item_ref_name:string detail_item_ref_value:integer detail_item_ref_type:string 'detail_unit_price:decimal{7,2}' 'detail_quantity:decimal{7,2}'
 
 [6] pry(main)> company_info.first.attributes
-=> {"id"=>1,
+=> {"id"=>1,     =>  qb_company_info_id
  "sync_token"=>6,
  "meta_data"=>{"create_time"=>2014-10-20 05:35:32 -0500, "last_updated_time"=>2014-11-29 06:06:29 -0600},
  "company_name"=>"Wesley Robinson Sandbox Company",
  "legal_name"=>"Wesley Robinson Sandbox Company",
  "company_address"=>
-  {"id"=>1,
+  {"id"=>1,             => qb_company_address_id
    "line1"=>"123 Sierra Way",
    "line2"=>nil,
    "line3"=>nil,
@@ -311,7 +312,7 @@ linked_transactions:string detail_item_ref_name:string detail_item_ref_value:int
    "lat"=>"36.6788345",
    "lon"=>"-5.4464622"},
  "customer_communication_address"=>
-  {"id"=>1,
+  {"id"=>1,                          => comm_address_id
    "line1"=>"123 Sierra Way",
    "line2"=>nil,
    "line3"=>nil,
@@ -325,7 +326,7 @@ linked_transactions:string detail_item_ref_name:string detail_item_ref_value:int
    "lat"=>"36.6788345",
    "lon"=>"-5.4464622"},
  "legal_address"=>
-  {"id"=>1,
+  {"id"=>1,                        => legal_address_id
    "line1"=>"123 Sierra Way",
    "line2"=>nil,
    "line3"=>nil,

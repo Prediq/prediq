@@ -8,7 +8,7 @@ class UserController < ApplicationController
 
   layout 'admin'
 
-  authorize_resource
+  # authorize_resource
 
   def index
 

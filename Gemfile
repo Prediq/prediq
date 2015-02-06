@@ -51,6 +51,10 @@ gem 'pry'
 # Quickbooks gem
 gem 'quickbooks-ruby'
 
+gem 'chilkat'
+
+gem 'ruby-mcrypt'
+
 gem 'oauth-plugin'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

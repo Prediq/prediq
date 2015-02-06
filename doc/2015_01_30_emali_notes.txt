@@ -1,0 +1,178 @@
+	2.22353950165411.20989774040538.22353950165444.18yxb0r6vhl1sqjkcaec8vtpwuey5izhtmxme7p5v1ydftj8k0
+	Adam Root
+	Bernard Perrine
+	bill@socialcentiv.com
+	Brian Botch
+	Cody Caughlan
+	Hal Helms
+	Victor G
+	Wes Robinson
+
+
+More
+
+1 of 115
+
+Prediq Data Warehouse
+Inbox
+	x
+Brian Botch
+
+Attachments11:30 AM (20 hours ago)
+
+to me
+Hi Bill,
+
+    Great catching up this morning, I wanted to recap.  What we need to accomplish the rest of this week and next is the following:
+
+    1.) Create new database prediq-Data-Warehouse
+    2.) Create the Schema design for the data warehouse and create the tables
+    3.) Populate the tables beginning with sales receipts and working your way through the remaining data elements.
+
+
+    NOTE: Oauth Keys for the sandbox environments will be located in prod_customer_oauth
+
+
+Key Encryption:
+
+    I have attached the aes encryption class I am using.  Let me know if you want to convert this to a Ruby class for use in the ETL server or if you want me to move this over to the internal API layer and expose it to you via cURL call.
+
+Intuit SQL Syntax:
+
+    Select Statement = SELECT ResponseSubset
+                       FROM IntuitEntity
+                       [WHERE WhereClause]
+                       [ORDERBY OrderByClause]
+                       [STARTPOSITION  Number] [MAXRESULTS  Number]
+
+
+Valid Intuit SQL Operaters:
+
+    =
+    IN
+    <
+    >
+    <=
+    >=
+    LIKE
+
+    AND
+
+    NOTE: The OR operation is not supported.  Wild card character support with LIKE clauses is limited to "%" (Wildcard that substitutes for zero or more characters)
+
+
+Sample Intuit Queries:
+
+    Get Last Updated Example:
+
+        SELECT * FROM Invoice WHERE MetaData.LastUpdatedTime <='2013-01-01T14:50:22-08:00'
+
+
+    Pagination:
+
+        SELECT * FROM Invoice WHERE Status = 'Synchronized'STARTPOSITION 1 MAXRESULTS 1'
+
+
+    Count:
+
+        SELECT COUNT(*)FROM Customer
+
+
+Specific Intuit Entity Examples:
+
+    Account:
+
+        SELECT * FROM Account
+
+    Bill:
+
+        SELECT * FROM Bill
+
+    Bill Payment:
+
+        SELECT * FROM BillPayment
+
+    Class:
+
+        SELECT * FROM Class
+
+    Company Info:
+
+        SELECT * FROM CompanyInfo
+
+    Customer:
+
+        SELECT * FROM Customer
+
+    Employee:
+
+        SELECT * FROM Employee
+
+    Estimate:
+
+        SELECT * FROM Estimate
+
+    Invoice:
+
+        SELECT * FROM Invoice
+
+    Items:
+
+        SELECT * FROM Item
+
+    Journal Entry:
+
+        SELECT * FROM JournalEntry
+
+    Payment:
+
+        SELECT * FROM Payment
+
+    Payment Method:
+
+        SELECT * FROM PaymentMethod
+
+    Purchase:
+
+        SELECT * FROM Purchase
+
+    Purchase Order:
+
+        SELECT * FROM PurchaseOrder
+
+    Sales Receipt:
+
+        SELECT * FROM SalesReceipt
+
+    Tax Code:
+
+        SELECT * FROM TaxCode
+
+    Terms:
+
+        SELECT * FROM Term
+
+    Time Activity:
+
+        SELECT * FROM TimeActivity
+
+    Vendor:
+
+        SELECT * FROM Vendor
+
+    Vendor Credit:
+
+        SELECT * FROM VendorCredit
+
+
+From my side, I plan to make a new database that will become our production DB for the transnational system / Dashboard.  I will send you over the info for it once I have it up and running this afternoon.  Your DB user will need Read access to this DB.
+
+Future items we need to keep in mind we will be working toward eventually (No Need to focus on any of this now):
+
+    1.) Data warehouse will need a datamart for our transactional DB
+    2.) ETL will need to translate our transactional Data Mart nightly
+    3.) We will need to capture Intuit data changes (Deltas via last updated date flag nightly)
+    4.) Instead of replacing the records in the data warehouse table we will store the original records in a change table for eventual point in time reporting. (NOTE:  we need to discuss this with our users before we even attempt to go down this road.  Point in time reporting, while valuable is very difficult and complex to accomplish.)
+
+
+Let me know what questions you have and feel free to call me anytime.

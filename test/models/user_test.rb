@@ -19,6 +19,7 @@
 #  last_sign_in_ip        :string(255)
 #  lastname               :string(32)       not null
 #  newsletter             :boolean          default(FALSE), not null
+#  qb_company_info_id     :integer          not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string(255)

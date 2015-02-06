@@ -47,7 +47,7 @@
 Working on:  left off at adding shipping_method
 */
 
-ALTER TABLE prediq_api_import_development.sales_receipt_imports ADD COLUMN meta_data_last_updated_time TIMESTAMP NULL AFTER meta_data_create_time; -- OK
+ALTER TABLE prediq_api_import_development.sales_receipt_imports ADD COLUMN meta_data_update_time TIMESTAMP NULL AFTER meta_data_create_time; -- OK
 ALTER TABLE prediq_api_import_development.sales_receipt_imports ADD COLUMN department_ref_name varchar(255) NULL AFTER customer_ref_type; -- OK
 ALTER TABLE prediq_api_import_development.sales_receipt_imports ADD COLUMN department_ref_value INTEGER(11) NULL AFTER department_ref_name; -- OK
 ALTER TABLE prediq_api_import_development.sales_receipt_imports ADD COLUMN department_ref_type varchar(255) NULL AFTER department_ref_value; -- OK
