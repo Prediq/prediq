@@ -260,8 +260,38 @@ PROCESS FLOW:
 
   end
 
-  def etl_address_info(user, qb_company_info_id, address_type, rails_env)
+  def etl_get_latpoints(user, qb_company_info_id, address_type, rails_env)
+    result = $dbconn.execute("
+      SELECT
+        lat as latpoint,
+        lon as longpoint
+      FROM prediq_api_import_#{rails_env}.address_info_imports ai
+      WHERE ai.api_customer_id = #{user.id} AND ai.qb_company_info_id = #{qb_company_info_id} and ai.address_type = '#{address_type}'").first
 
+    # result = $dbconn.execute("
+    #   SELECT
+    #     lat as latpoint,
+    #     lon as longpoint
+    #   FROM prediq_api_import_development.address_info_imports ai
+    #   WHERE ai.api_customer_id = 9 AND ai.qb_company_info_id = 1 and ai.address_type = 'comm'")
+
+    # latpoint  = result.first[0]
+    # longpoint = result.first[1]
+
+    {latpoint: result[0], longpoint: result[1]}
+
+  end
+
+  def etl_address_info(user, qb_company_info_id, address_type, rails_env)
+    # NOTE: Needs to ensure that we don't operate on a NULL value for lat or long so that we don't send a null value into
+    # NOTE: The lat / lon for the QB sample address data is in Spain (36.6788345, -5.4464622) so we updated the coords
+    # to be in Dallas (32.775, -96.7967) just so we can see weather_stations_id = 331
+=begin
+  update prediq_api_import_development.address_info_imports set lat = 32.775, lon = -96.7967 where id > 0;
+=end
+    $dbconn.execute("update prediq_api_import_development.address_info_imports set lat = 32.775, lon = -96.7967 where id > 0;") # NOTE: remove for PROD
+
+    latpoints = etl_get_latpoints(user, qb_company_info_id, address_type, rails_env)
     puts "****** "
     # Haversine great circle formula
     #  http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
@@ -293,8 +323,10 @@ PROCESS FLOW:
          JOIN
            (
               SELECT
-            32.7758  as latpoint,
-            -96.7967 as longpoint
+            #{latpoints[:latpoint]}  as latpoint,
+            #{latpoints[:longpoint]} as longpoint
+          --  32.7758  as latpoint,
+          --  -96.7967 as longpoint
             ) AS p ON 1=1
           ORDER BY
            111.045* DEGREES(ACOS(COS(RADIANS(latpoint))
@@ -324,7 +356,7 @@ PROCESS FLOW:
 
   def etl_sales_receipts(user, rails_env)
     user_id = user.id
-    # INSERT the the sales_receipt_imports records into the dimension table D_SALES_RECEIPTS
+    # INSERT the the sales_receipt_imports records into the dimension table d_sales_receipt
     $dbconn.execute("
       INSERT INTO prediq_dw_#{rails_env}.d_sales_receipt(
         -- keys
